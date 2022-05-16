@@ -74,8 +74,15 @@ public class Console {
         this.quantity = quantity;
     }
 
-    // STANDARD METHODS - Equals, Hashcode, toString
+    // HELPER METHODS
+    public void addQuantity(Integer qty){
+        this.quantity += qty;
+    }
+    public void removeQuantity(Integer qty){
+        this.quantity -= qty;
+    }
 
+    // STANDARD METHODS - Equals, Hashcode, toString
 
     @Override
     public boolean equals(Object o) {

@@ -66,6 +66,14 @@ public class TShirt {
         this.quantity = quantity;
     }
 
+    // HELPER METHODS
+    public void addQuantity(Integer qty){
+        this.quantity += qty;
+    }
+    public void removeQuantity(Integer qty){
+        this.quantity -= qty;
+    }
+
     // STANDARD METHODS - Equals, Hashcode, toString
 
     @Override
@@ -81,6 +89,17 @@ public class TShirt {
         return Objects.hash(id, size, color, description, price, quantity);
     }
 
+    @Override
+    public String toString() {
+        return "TShirt{" +
+                "id=" + id +
+                ", size='" + size + '\'' +
+                ", color='" + color + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                '}';
+    }
 
     // STANDARD METHODS - Getters and Setters
 

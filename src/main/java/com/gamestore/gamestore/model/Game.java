@@ -75,6 +75,13 @@ public class Game {
         this.quantity = quantity;
     }
 
+    // HELPER METHODS
+    public void addQuantity(Integer qty){
+        this.quantity += qty;
+    }
+    public void removeQuantity(Integer qty){
+        this.quantity -= qty;
+    }
 
     // STANDARD METHODS - Equals, Hashcode, toString
 
@@ -103,6 +110,7 @@ public class Game {
                 ", quantity=" + quantity +
                 '}';
     }
+
 
     // STANDARD METHODS - Getters and Setters
     public Integer getId() {return id;}
