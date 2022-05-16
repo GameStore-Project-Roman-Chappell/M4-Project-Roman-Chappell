@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.controller;
 
+import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.Game;
 import com.gamestore.gamestore.service.ServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class GamesController {
             updatedGame.setId(id);
         }
         if (updatedGame.getId() != id) {
-            throw new Exception("Game Id in request must match URL path id");
+            throw new UnprocessableRequestException("Game Id in request must match URL path id");
         }
         serviceLayer.updateGame(updatedGame);
     }

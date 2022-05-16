@@ -1,6 +1,7 @@
 package com.gamestore.gamestore.controller;
 
 
+import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.TShirt;
 import com.gamestore.gamestore.service.ServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class TShirtsController {
             updatedTShirt.setId(id);
         }
         if (updatedTShirt.getId() != id) {
-            throw new Exception("T-Shirt Id in request must match URL path id");
+            throw new UnprocessableRequestException("T-Shirt Id in request must match URL path id");
         }
         serviceLayer.updateTShirt(updatedTShirt);
     }
