@@ -10,38 +10,50 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/games")
 public class GamesController {
 
     @Autowired
     private ServiceLayer serviceLayer;
 
 
-    @RequestMapping(value="/games", method= RequestMethod.GET)
+    @RequestMapping( method= RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Game> getAllGames() {
+    public List<Game> getAllGames(@RequestParam(required = false) String title,
+                                  @RequestParam(required=false) String studio,
+                                  @RequestParam(required=false) String esrb) {
+
+        if (title != null) {
+            return serviceLayer.findGamesByTitleLike(title);
+        }
+        if (studio != null) {
+            return serviceLayer.findGamesByStudio(studio);
+        }
+        if (esrb != null) {
+            return serviceLayer.findGamesByESRB(esrb);
+        }
         return serviceLayer.findAllGames();
     }
 
-    @RequestMapping(value="/games/{id}", method=RequestMethod.GET)
+    @RequestMapping(value="/{id}", method=RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Game findGameById(@PathVariable int id) {
-        Game returnGame = serviceLayer.findGame(id);
-        return returnGame;
+        return serviceLayer.findGame(id);
     }
 
-    @RequestMapping(value = "games", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Game createGame(@RequestBody Game game) {
         return serviceLayer.saveGame(game);
     }
 
-    @RequestMapping(value="games/{id}", method=RequestMethod.DELETE)
+    @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGame(@PathVariable int id) {
         serviceLayer.deleteGame(id);
     }
 
-    @RequestMapping(value="games/{id}", method=RequestMethod.PUT)
+    @RequestMapping(value="/{id}", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public void updateGame(@PathVariable int id, @RequestBody Game updatedGame) {
         if (updatedGame.getId() == 0) {
