@@ -51,23 +51,36 @@ public class ServiceLayer {
 
 
 //    TShirts CRUD
+    //CREATE
     public TShirt saveTShirt(TShirt tShirt) {
         return tShirtRepository.save(tShirt);
     }
 
+    //READ METHODS
     public List<TShirt> findAllTShirts() {
         return tShirtRepository.findAll();
     }
 
-    public TShirt findTShirt(int id) {
+    public List<TShirt> findTShirtsByColorAndSize(String color, String size){
+        return tShirtRepository.findAllByColorAndSize(color,size);
+    }
+    public List<TShirt> findTShirtsByColor(String color){
+        return tShirtRepository.findAllByColor(color);
+    }
+    public List<TShirt> findTShirtsBySize(String size){
+        return tShirtRepository.findAllBySize(size);
+    }
+
+    public TShirt findTShirtById(int id) {
         Optional<TShirt> tShirt = tShirtRepository.findById(id);
         return tShirt.isPresent() ? tShirt.get() : null;
     }
 
+    // UPDATE METHOD
     public void updateTShirt(TShirt tShirt) {
         tShirtRepository.save(tShirt);
     }
-
+    // DELETE METHOD
     public void deleteTShirt(int id) {
         tShirtRepository.deleteById(id);
     }

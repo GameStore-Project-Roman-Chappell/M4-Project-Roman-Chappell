@@ -8,40 +8,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/tshirts")
 public class TShirtsController {
 
     @Autowired
     private ServiceLayer serviceLayer;
     
-    @RequestMapping(value="/TShirts", method=RequestMethod.GET)
+    @RequestMapping(method=RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<TShirt> getAllTShirts() {
-        return serviceLayer.findAllTShirts();
+    public List<TShirt> getAllTShirts(@RequestParam(required = false) String color,
+                                      @RequestParam(required=false) String size) {
+        if (color != null && size != null) {
+            return serviceLayer.findTShirtsByColorAndSize(color, size);
+        } else if (color != null) {
+            return serviceLayer.findTShirtsByColor(color);
+        }else if (size != null) {
+            return serviceLayer.findTShirtsBySize(size);
+        }else {
+            return serviceLayer.findAllTShirts();
+        }
     }
 
-    @RequestMapping(value="/TShirts/{id}", method= RequestMethod.GET)
+    @RequestMapping(value="/{id}", method= RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public TShirt findTShirtById(@PathVariable int id) {
-        TShirt returnTShirt = serviceLayer.findTShirt(id);
+        TShirt returnTShirt = serviceLayer.findTShirtById(id);
         return returnTShirt;
     }
 
-    @RequestMapping(value = "TShirts", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public TShirt createTShirt(@RequestBody TShirt newTShirt) {
         return serviceLayer.saveTShirt(newTShirt);
     }
 
-    @RequestMapping(value="TShirts/{id}", method=RequestMethod.DELETE)
+    @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTShirt(@PathVariable int id) {
          serviceLayer.deleteTShirt(id);
     }
 
-    @RequestMapping(value="TShirts/{id}", method=RequestMethod.PUT)
+    @RequestMapping(value="/{id}", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public void updateTShirt(@PathVariable int id, @RequestBody TShirt updatedTShirt) {
         if (updatedTShirt.getId() == 0) {
