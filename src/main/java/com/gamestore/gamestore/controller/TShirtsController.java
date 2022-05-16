@@ -1,4 +1,4 @@
-package com.gamestore.gamestore.controllers;
+package com.gamestore.gamestore.controller;
 
 
 import com.gamestore.gamestore.model.TShirt;
@@ -47,7 +47,7 @@ public class TShirtsController {
             updatedTShirt.setId(id);
         }
         if (updatedTShirt.getId() != id) {
-            throw new InvalidRequestException("Request ID must match table id");
+            throw new Exception("T-Shirt Id in request must match URL path id");
         }
         serviceLayer.updateTShirt(updatedTShirt);
     }

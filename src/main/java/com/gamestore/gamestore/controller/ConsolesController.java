@@ -1,4 +1,4 @@
-package com.gamestore.gamestore.controllers;
+package com.gamestore.gamestore.controller;
 
 import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.service.ServiceLayer;
@@ -47,7 +47,7 @@ public class ConsolesController {
             updatedConsole.setId(id);
         }
         if (updatedConsole.getId() != id) {
-            throw new InvalidRequestException("Request ID must match table id");
+            throw new Exception("Console Id in request must match URL path id");
         }
         serviceLayer.updateConsole(updatedConsole);
     }
