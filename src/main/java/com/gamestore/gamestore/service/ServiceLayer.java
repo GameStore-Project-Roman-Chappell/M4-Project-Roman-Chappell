@@ -26,7 +26,7 @@ public class ServiceLayer {
         this.tShirtRepository = tShirtRepository;
         this.gameRepository = gameRepository;
     }
-
+// ------------------------   CONSOLES SECTION   ----------------------//
 //    Consoles CRUD
     public Console saveConsole(Console console) {
         return consoleRepository.save(console);
@@ -35,7 +35,9 @@ public class ServiceLayer {
     public List<Console> findAllConsoles() {
         return consoleRepository.findAll();
     }
-
+    public List<Console> findAllConsolesByManufacturer(String manufacturer){
+        return consoleRepository.findByManufacturer(manufacturer);
+    }
     public Console findConsole(int id) {
         Optional<Console> console = consoleRepository.findById(id);
         return console.isPresent() ? console.get() : null;
@@ -49,29 +51,42 @@ public class ServiceLayer {
         consoleRepository.deleteById(id);
     }
 
-
+// ------------------------   T SHIRTS SECTION   ----------------------//
 //    TShirts CRUD
+    //CREATE
     public TShirt saveTShirt(TShirt tShirt) {
         return tShirtRepository.save(tShirt);
     }
 
+    //READ METHODS
     public List<TShirt> findAllTShirts() {
         return tShirtRepository.findAll();
     }
 
-    public TShirt findTShirt(int id) {
+    public List<TShirt> findTShirtsByColorAndSize(String color, String size){
+        return tShirtRepository.findAllByColorAndSize(color,size);
+    }
+    public List<TShirt> findTShirtsByColor(String color){
+        return tShirtRepository.findAllByColor(color);
+    }
+    public List<TShirt> findTShirtsBySize(String size){
+        return tShirtRepository.findAllBySize(size);
+    }
+
+    public TShirt findTShirtById(int id) {
         Optional<TShirt> tShirt = tShirtRepository.findById(id);
         return tShirt.isPresent() ? tShirt.get() : null;
     }
 
+    // UPDATE METHOD
     public void updateTShirt(TShirt tShirt) {
         tShirtRepository.save(tShirt);
     }
-
+    // DELETE METHOD
     public void deleteTShirt(int id) {
         tShirtRepository.deleteById(id);
     }
-
+// ------------------------  GAMES SECTION   ----------------------//
 //    Games CRUD
     public Game saveGame(Game game) {
         return gameRepository.save(game);
@@ -93,4 +108,8 @@ public class ServiceLayer {
     public void deleteGame(int id) {
         gameRepository.deleteById(id);
     }
+// ------------------------  INVOICE SECTION   ----------------------//
+
+
+
 }
