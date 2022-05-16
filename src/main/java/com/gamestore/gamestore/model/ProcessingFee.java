@@ -12,11 +12,6 @@ import java.util.Objects;
 @Table(name="processing_fee")
 public class ProcessingFee {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="processing_fee_id")
-    private Integer id;
-
     @NotNull(message = "Processing Fee must have a productType.")
     @NotBlank(message = "Processing Fee productType cannot be empty.")
     @Size(max = 20, message = "Processing Fee productType must be less than 20 characters.")
@@ -30,8 +25,7 @@ public class ProcessingFee {
 
     public ProcessingFee(){}
 
-    public ProcessingFee(Integer id, String productType, BigDecimal fee) {
-        this.id = id;
+    public ProcessingFee( String productType, BigDecimal fee) {
         this.productType = productType;
         this.fee = fee;
     }
@@ -41,25 +35,21 @@ public class ProcessingFee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProcessingFee that = (ProcessingFee) o;
-        return Objects.equals(id, that.id) && Objects.equals(productType, that.productType) && Objects.equals(fee, that.fee);
+        return Objects.equals(productType, that.productType) && Objects.equals(fee, that.fee);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productType, fee);
+        return Objects.hash(productType, fee);
     }
 
     @Override
     public String toString() {
         return "ProcessingFee{" +
-                "id=" + id +
-                ", productType='" + productType + '\'' +
+                "productType='" + productType + '\'' +
                 ", fee=" + fee +
                 '}';
     }
-
-    public Integer getId() {return id;}
-    public void setId(Integer id) {this.id = id;}
 
     public String getProductType() {return productType;}
     public void setProductType(String productType) {this.productType = productType;}

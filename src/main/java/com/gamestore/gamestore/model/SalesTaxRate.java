@@ -13,11 +13,6 @@ import java.util.Objects;
 @Table(name="sales_tax_rate")
 public class SalesTaxRate {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="tax_rate_id")
-    private Integer id;
-
     @NotNull(message="Sales tax rate must have a state.")
     @Size(min = 2, max = 2, message = "Sales Tax state must be 2 characters.")
     @Column(name="state", unique = true)
@@ -30,8 +25,7 @@ public class SalesTaxRate {
 
     public SalesTaxRate(){}
 
-    public SalesTaxRate(Integer id, String state, BigDecimal rate) {
-        this.id = id;
+    public SalesTaxRate(String state, BigDecimal rate) {
         this.state = state;
         this.rate = rate;
     }
@@ -41,25 +35,21 @@ public class SalesTaxRate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SalesTaxRate that = (SalesTaxRate) o;
-        return Objects.equals(id, that.id) && Objects.equals(state, that.state) && Objects.equals(rate, that.rate);
+        return Objects.equals(state, that.state) && Objects.equals(rate, that.rate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, state, rate);
+        return Objects.hash(state, rate);
     }
 
     @Override
     public String toString() {
         return "SalesTaxRate{" +
-                "id=" + id +
-                ", state='" + state + '\'' +
+                "state='" + state + '\'' +
                 ", rate=" + rate +
                 '}';
     }
-
-    public Integer getId() {return id;}
-    public void setId(Integer id) {this.id = id;}
 
     public String getState() {return state;}
     public void setState(String state) {this.state = state;}
