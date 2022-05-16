@@ -12,7 +12,8 @@ import java.util.List;
 public class GamesController {
 
     @Autowired
-    private ServiceLayer serviceLayer
+    private ServiceLayer serviceLayer;
+
 
     @RequestMapping(value="/games", method= RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -46,7 +47,7 @@ public class GamesController {
             updatedGame.setId(id);
         }
         if (updatedGame.getId() != id) {
-            throw new InvalidRequestException("Request ID must match table id");
+            throw new Exception("Game Id in request must match URL path id");
         }
         serviceLayer.updateGame(updatedGame);
     }

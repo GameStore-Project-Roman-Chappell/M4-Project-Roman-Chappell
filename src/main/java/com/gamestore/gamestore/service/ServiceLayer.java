@@ -69,7 +69,7 @@ public class ServiceLayer {
     }
 
     public void deleteTShirt(int id) {
-        tShirtRepository.deleteById(id)
+        tShirtRepository.deleteById(id);
     }
 
 //    Games CRUD

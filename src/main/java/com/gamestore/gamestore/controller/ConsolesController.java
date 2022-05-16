@@ -47,7 +47,8 @@ public class ConsolesController {
             updatedConsole.setId(id);
         }
         if (updatedConsole.getId() != id) {
-            throw new InvalidRequestException("Request ID must match table id");
+            throw new Exception("Console Id in request must match URL path id");
+
         }
         serviceLayer.updateConsole(updatedConsole);
     }
