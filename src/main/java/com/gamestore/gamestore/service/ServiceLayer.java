@@ -1,15 +1,12 @@
 package com.gamestore.gamestore.service;
 
-import com.gamestore.gamestore.model.Console;
-import com.gamestore.gamestore.model.Game;
-import com.gamestore.gamestore.model.TShirt;
-import com.gamestore.gamestore.repository.ConsoleRepository;
-import com.gamestore.gamestore.repository.GameRepository;
-import com.gamestore.gamestore.repository.TShirtRepository;
+import com.gamestore.gamestore.model.*;
+import com.gamestore.gamestore.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +16,18 @@ public class ServiceLayer {
     private ConsoleRepository consoleRepository;
     private TShirtRepository tShirtRepository;
     private GameRepository gameRepository;
+    private InvoiceRepository invoiceRepository;
+    private SalesTaxRateRepository taxRateRepository;
+    private ProcessingFeeRepository feeRepository;
 
     @Autowired
-    public ServiceLayer(ConsoleRepository consoleRepository, TShirtRepository tShirtRepository, GameRepository gameRepository) {
+    public ServiceLayer(ConsoleRepository consoleRepository, TShirtRepository tShirtRepository, GameRepository gameRepository, InvoiceRepository invoiceRepository, SalesTaxRateRepository taxRateRepository, ProcessingFeeRepository feeRepository) {
         this.consoleRepository = consoleRepository;
         this.tShirtRepository = tShirtRepository;
         this.gameRepository = gameRepository;
+        this.invoiceRepository = invoiceRepository;
+        this.taxRateRepository = taxRateRepository;
+        this.feeRepository = feeRepository;
     }
 // ------------------------   CONSOLES SECTION   ----------------------//
 //    Consoles CRUD
@@ -119,7 +122,76 @@ public class ServiceLayer {
         gameRepository.deleteById(id);
     }
 // ------------------------  INVOICE SECTION   ----------------------//
+    @Transactional
+    public Invoice createInvoice(Invoice invoice){
+        // Add the fee based on the item type, and check the Quantity of the Item Id Available before Transaction
+        String type = invoice.getItemType();
+        Integer itemId = invoice.getItemId();
+        Integer qtyRequested = invoice.getQuantity();
+        switch(type){
+            case "tshirt":
+                TShirt shirt = tShirtRepository.getById(itemId);
+                if(shirt.getQuantity() < qtyRequested){
+                    // throw Error or response for invalid request, you cannot buy x QTY, we only have y
+                }else{
+                    // Get the Fee from the ProcessingFee for tshirt
+                    ProcessingFee fee = feeRepository.findByProductType("tshirt");
+                    invoice.setProcessingFee(fee.getFee());
+                    // Calculate the subtotal abd set it to the invoice
+                    BigDecimal qty = new BigDecimal(qtyRequested);
+                    BigDecimal subtotal = shirt.getPrice().multiply(qty);
+                    invoice.setSubtotal(subtotal);
+                }
+                break;
+            case "console":
+                Console console = consoleRepository.getById(itemId);
+                if(console.getQuantity() < qtyRequested){
+                    // throw Error or response for invalid request, you cannot buy x QTY, we only have y
+                }else{
+                    ProcessingFee fee = feeRepository.findByProductType("console");
+                    invoice.setProcessingFee(fee.getFee());
+                    // Calculate the subtotal abd set it to the invoice
+                    BigDecimal qty = new BigDecimal(qtyRequested);
+                    BigDecimal subtotal = console.getPrice().multiply(qty);
+                    invoice.setSubtotal(subtotal);
+                }
+                break;
+            case "game":
+                Game game = gameRepository.getById(itemId);
+                if(game.getQuantity() < qtyRequested){
+                    // throw Error or response for invalid request, you cannot buy x QTY, we only have y
+                }else{
+                    ProcessingFee fee = feeRepository.findByProductType("game");
+                    invoice.setProcessingFee(fee.getFee());
+                    // Calculate the subtotal abd set it to the invoice
+                    BigDecimal qty = new BigDecimal(qtyRequested);
+                    BigDecimal subtotal = game.getPrice().multiply(qty);
+                    invoice.setSubtotal(subtotal);
+                }
+                break;
+            default:
+                //Add Error, bad type
+        }
+        // Add Extra Processing fee for Large Order
+        if(invoice.getQuantity() >= 10){
+            BigDecimal additionalFee = new BigDecimal(15.49);
+            BigDecimal processingFee = invoice.getProcessingFee().add(additionalFee);
+            invoice.setProcessingFee(processingFee);
+        }
+
+        // Get the tax rate based on the order state and perform the calculation based on the subtotal
+        BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
+        BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal());
+        invoice.setTax(taxValue);
+
+        // Add the total
+        BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getProcessingFee());
+        invoice.setTotal(total);
+
+        // Save and Return the Invoice
 
 
+        return invoice;
+    }
 
 }
