@@ -37,7 +37,7 @@ public class Console {
     @Column(name="memory_amount", nullable = true)
     private String memoryAmount;
 
-    @Size(max = 20, message = "Console processor must be less than 50 characters.")
+    @Size(max = 20, message = "Console processor must be less than 20 characters.")
     @Column(name="processor", nullable = true)
     private String processor;
 

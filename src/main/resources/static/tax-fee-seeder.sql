@@ -1,6 +1,6 @@
 USE game_store;
 
-# SET PRODOCUT PROCESSING FEES
+# SET PRODUCT PROCESSING FEES
 INSERT INTO processing_fee(product_type, fee)
 VALUES('console', 14.99),
        ('tshirt', 1.98),
