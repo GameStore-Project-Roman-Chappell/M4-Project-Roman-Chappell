@@ -12,6 +12,7 @@ import java.util.Objects;
 @Table(name="processing_fee")
 public class ProcessingFee {
 
+    @Id
     @NotNull(message = "Processing Fee must have a productType.")
     @NotBlank(message = "Processing Fee productType cannot be empty.")
     @Size(max = 20, message = "Processing Fee productType must be less than 20 characters.")

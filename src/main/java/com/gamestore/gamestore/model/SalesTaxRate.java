@@ -13,6 +13,7 @@ import java.util.Objects;
 @Table(name="sales_tax_rate")
 public class SalesTaxRate {
 
+    @Id
     @NotNull(message="Sales tax rate must have a state.")
     @Size(min = 2, max = 2, message = "Sales Tax state must be 2 characters.")
     @Column(name="state", unique = true)
