@@ -81,8 +81,8 @@ public class TShirt {
         return Objects.hash(id, size, color, description, price, quantity);
     }
 
-    // STANDARD METHODS - Getters and Setters
 
+    // STANDARD METHODS - Getters and Setters
 
     public Integer getId() {return id;}
     public void setId(Integer id) {this.id = id;}
