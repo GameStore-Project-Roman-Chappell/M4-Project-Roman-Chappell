@@ -85,4 +85,12 @@ public class ServiceLayer {
         Optional<Game> game = gameRepository.findById(id);
         return game.isPresent() ? game.get() : null;
     }
+
+    public void updateGame(Game game) {
+        gameRepository.save(game);
+    }
+
+    public void deleteGame(int id) {
+        gameRepository.deleteById(id);
+    }
 }
