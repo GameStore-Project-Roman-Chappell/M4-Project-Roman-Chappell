@@ -96,6 +96,16 @@ public class ServiceLayer {
         return gameRepository.findAll();
     }
 
+    public List<Game> findGamesByTitleLike(String title){
+        return gameRepository.findByTitleLike(title);
+    }
+    public List<Game> findGamesByStudio(String studio){
+        return gameRepository.findByStudio(studio);
+    }
+    public List<Game> findGamesByESRB(String esrb){
+        return gameRepository.findByEsrbRating(esrb);
+    }
+
     public Game findGame(int id) {
         Optional<Game> game = gameRepository.findById(id);
         return game.isPresent() ? game.get() : null;
