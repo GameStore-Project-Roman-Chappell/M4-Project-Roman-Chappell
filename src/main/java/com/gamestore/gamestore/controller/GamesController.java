@@ -1,4 +1,4 @@
-package com.gamestore.gamestore.controllers;
+package com.gamestore.gamestore.controller;
 
 import com.gamestore.gamestore.model.Game;
 import com.gamestore.gamestore.service.ServiceLayer;
