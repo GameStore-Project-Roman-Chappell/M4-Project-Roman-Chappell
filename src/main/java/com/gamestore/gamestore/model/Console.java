@@ -76,6 +76,7 @@ public class Console {
 
     // STANDARD METHODS - Equals, Hashcode, toString
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
