@@ -26,7 +26,7 @@ public class ServiceLayer {
         this.tShirtRepository = tShirtRepository;
         this.gameRepository = gameRepository;
     }
-
+// ------------------------   CONSOLES SECTION   ----------------------//
 //    Consoles CRUD
     public Console saveConsole(Console console) {
         return consoleRepository.save(console);
@@ -35,7 +35,9 @@ public class ServiceLayer {
     public List<Console> findAllConsoles() {
         return consoleRepository.findAll();
     }
-
+    public List<Console> findAllConsolesByManufacturer(String manufacturer){
+        return consoleRepository.findByManufacturer(manufacturer);
+    }
     public Console findConsole(int id) {
         Optional<Console> console = consoleRepository.findById(id);
         return console.isPresent() ? console.get() : null;
@@ -49,7 +51,7 @@ public class ServiceLayer {
         consoleRepository.deleteById(id);
     }
 
-
+// ------------------------   T SHIRTS SECTION   ----------------------//
 //    TShirts CRUD
     //CREATE
     public TShirt saveTShirt(TShirt tShirt) {
@@ -84,7 +86,7 @@ public class ServiceLayer {
     public void deleteTShirt(int id) {
         tShirtRepository.deleteById(id);
     }
-
+// ------------------------  GAMES SECTION   ----------------------//
 //    Games CRUD
     public Game saveGame(Game game) {
         return gameRepository.save(game);
@@ -106,4 +108,8 @@ public class ServiceLayer {
     public void deleteGame(int id) {
         gameRepository.deleteById(id);
     }
+// ------------------------  INVOICE SECTION   ----------------------//
+
+
+
 }
