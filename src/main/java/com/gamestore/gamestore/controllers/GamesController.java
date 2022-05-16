@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 public class GamesController {
+    
 
     @RequestMapping(value="/games", method= RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
