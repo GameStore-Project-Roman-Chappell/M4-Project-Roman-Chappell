@@ -14,6 +14,7 @@ public class GamesController {
     @Autowired
     private ServiceLayer serviceLayer;
 
+
     @RequestMapping(value="/games", method= RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Game> getAllGames() {

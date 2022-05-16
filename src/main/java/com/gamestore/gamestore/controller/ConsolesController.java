@@ -48,6 +48,7 @@ public class ConsolesController {
         }
         if (updatedConsole.getId() != id) {
             throw new Exception("Console Id in request must match URL path id");
+
         }
         serviceLayer.updateConsole(updatedConsole);
     }
