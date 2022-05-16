@@ -2,6 +2,7 @@ package com.gamestore.gamestore.controllers;
 
 
 import com.gamestore.gamestore.model.TShirt;
+import com.gamestore.gamestore.service.ServiceLayer;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,26 +14,26 @@ public class TShirtsController {
     @RequestMapping(value="/TShirts", method=RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<TShirt> getAllTShirts() {
-        return serviceLayer.findAllTShirts();
+        return ServiceLayer.findAllTShirts();
     }
 
     @RequestMapping(value="/TShirts/{id}", method= RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public TShirt findTShirtById(@PathVariable int id) {
-        TShirt returnTShirt = serviceLayer.findTShirt(id);
+        TShirt returnTShirt = ServiceLayer.findTShirt(id);
         return returnTShirt;
     }
 
     @RequestMapping(value = "TShirts", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public TShirt createTShirt(@RequestBody TShirt newTShirt) {
-        return serviceLayer.saveTShirt(newTShirt);
+        return ServiceLayer.saveTShirt(newTShirt);
     }
 
     @RequestMapping(value="TShirts/{id}", method=RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTShirt(@PathVariable int id) {
-        return serviceLayer.deleteTShirt(id);
+        return ServiceLayer.deleteTShirt(id);
     }
 
     @RequestMapping(value="TShirts/{id}", method=RequestMethod.PUT)
@@ -44,6 +45,6 @@ public class TShirtsController {
         if (updatedTShirt.getId() != id) {
             throw new InvalidRequestException("Request ID must match table id");
         }
-        serviceLayer.updateTShirt(updatedTShirt);
+        ServiceLayer.updateTShirt(updatedTShirt);
     }
 }

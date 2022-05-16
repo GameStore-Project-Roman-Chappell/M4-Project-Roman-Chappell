@@ -1,6 +1,8 @@
 package com.gamestore.gamestore.controllers;
 
 import com.gamestore.gamestore.model.Console;
+import com.gamestore.gamestore.service.ServiceLayer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +11,9 @@ import java.util.List;
 
 @RestController
 public class ConsolesController {
+
+    @Autowired
+    private ServiceLayer serviceLayer;
 
     @RequestMapping(value="/consoles", method= RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -32,7 +37,7 @@ public class ConsolesController {
     @RequestMapping(value="consoles/{id}", method=RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteConsole(@PathVariable int id) {
-        return serviceLayer.deleteConsole(id);
+        serviceLayer.deleteConsole(id);
     }
 
     @RequestMapping(value="consoles/{id}", method=RequestMethod.PUT)
