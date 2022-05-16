@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.controller;
 
+import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.service.ServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class ConsolesController {
             updatedConsole.setId(id);
         }
         if (updatedConsole.getId() != id) {
-            throw new Exception("Console Id in request must match URL path id");
+            throw new UnprocessableRequestException("Console Id in request must match URL path id");
 
         }
         serviceLayer.updateConsole(updatedConsole);
