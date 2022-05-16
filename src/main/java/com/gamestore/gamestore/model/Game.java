@@ -53,6 +53,7 @@ public class Game {
     private Integer quantity;
 
     // CONSTRUCTORS - NO FIELD, ALL-BUT-ID, ALL FIELD
+
     public Game(){}
 
     public Game(String title, String esrbRating, String description, String studio, BigDecimal price, Integer quantity) {
@@ -76,6 +77,7 @@ public class Game {
 
 
     // STANDARD METHODS - Equals, Hashcode, toString
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
