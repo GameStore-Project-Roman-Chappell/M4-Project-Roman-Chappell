@@ -1,8 +1,8 @@
 package com.gamestore.gamestore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gamestore.gamestore.model.Game;
-import com.gamestore.gamestore.repository.GameRepository;
+import com.gamestore.gamestore.model.TShirt;
+import com.gamestore.gamestore.repository.TShirtRepository;
 import com.gamestore.gamestore.service.ServiceLayer;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(GamesController.class)
-public class GamesControllerTest {
+@WebMvcTest(TShirtsController.class)
+public class TShirtControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,92 +35,90 @@ public class GamesControllerTest {
     private ServiceLayer serviceLayer;
 
     @MockBean
-    GameRepository gamesRepo;
+    TShirtRepository shirtRepo;
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    Game inputGame;
+    TShirt inputShirt;
 
-    Game outputGame;
+    TShirt outputShirt;
 
-    String inputGameString;
+    String inputShirtString;
 
-    String outputGameString;
+    String outputShirtString;
 
-    List<Game> allGames;
+    List<TShirt> allShirts;
 
-    String allGamesString;
+    String allShirtsString;
 
     @Before
     public void setUp() throws Exception {
-        inputGame = new Game("Elden Ring", "M", "Action Adventure", "From Software", new BigDecimal(59.99), 50);
-        outputGame = new Game(1,"Elden Ring", "M", "Action Adventure", "From Software", new BigDecimal(59.99), 50);
-        inputGameString = mapper.writeValueAsString(inputGame);
-        outputGameString = mapper.writeValueAsString(outputGame);
-        allGames = Arrays.asList(outputGame);
-        allGamesString = mapper.writeValueAsString(allGames);
+        inputShirt = new TShirt("Medium","Red","Zelda Shirt", new BigDecimal(7.99),25);
+        outputShirt = new TShirt(1,"Medium","Red","Zelda Shirt", new BigDecimal(7.99),25);
+        inputShirtString = mapper.writeValueAsString(inputShirt);
+        outputShirtString = mapper.writeValueAsString(outputShirt);
+        allShirts = Arrays.asList(outputShirt);
+        allShirtsString = mapper.writeValueAsString(allShirts);
 
-        when(serviceLayer.saveGame(inputGame)).thenReturn(outputGame);
-        when(serviceLayer.findAllGames()).thenReturn(allGames);
-        when(serviceLayer.findGame(1)).thenReturn(outputGame);
-
+        when(serviceLayer.saveTShirt(inputShirt)).thenReturn(outputShirt);
+        when(serviceLayer.findAllTShirts()).thenReturn(allShirts);
+        when(serviceLayer.findTShirtById(1)).thenReturn(outputShirt);
     }
 
     @Test
-    public void shouldAddGameOnPostRequest() throws Exception {
-        mockMvc.perform(post("/games")
-                .content(inputGameString)
+    public void shouldAddShirtOnPostRequest() throws Exception {
+        mockMvc.perform(post("/tshirts")
+                .content(inputShirtString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(content().json(outputGameString));
+                .andExpect(content().json(outputShirtString));
     }
 
     @Test
-    public void shouldGetArrayOfGames() throws Exception {
-        mockMvc.perform(get("/games"))
+    public void shouldGetArrayOfShirts() throws Exception {
+        mockMvc.perform(get("/tshirts"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(allGamesString));
+                .andExpect(content().json(allShirtsString));
     }
 
     @Test
-    public void shouldGetGamesById() throws Exception {
-        mockMvc.perform(get("/games/1"))
+    public void shouldGetShirtsById() throws Exception {
+        mockMvc.perform(get("/tshirts/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(outputGameString));
+                .andExpect(content().json(outputShirtString));
     }
 
     @Test
-    public void shouldUpdateGames() throws Exception {
-        mockMvc.perform(put("/games/1")
-                .content(outputGameString)
+    public void shouldUpdateShirts() throws Exception {
+        mockMvc.perform(put("/tshirts/1")
+                .content(outputShirtString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void shouldDeleteGame() throws Exception {
-        mockMvc.perform(delete("/games/1"))
+    public void shouldDeleteShirt() throws Exception {
+        mockMvc.perform(delete("/tshirts/1"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
 
     @Test
     public void shouldReturn404WhenFindingInvalidId() throws Exception {
-        mockMvc.perform(get("/games/999"))
+        mockMvc.perform(get("/tshirts/999"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void shouldReturn422WhenPutRequestContainsInvalidIds() throws Exception {
-        mockMvc.perform(put("/games/999")
-                .content(outputGameString)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/tshirts/999")
+                        .content(outputShirtString)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
-
 }
