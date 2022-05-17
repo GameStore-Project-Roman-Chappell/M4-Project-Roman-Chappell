@@ -92,7 +92,7 @@ public class TShirtControllerTest {
 
     @Test
     public void shouldUpdateShirts() throws Exception {
-        mockMvc.perform(put("tshirts/1")
+        mockMvc.perform(put("/tshirts/1")
                 .content(outputShirtString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -103,7 +103,7 @@ public class TShirtControllerTest {
     public void shouldDeleteShirt() throws Exception {
         mockMvc.perform(delete("/tshirts/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent())
+                .andExpect(status().isNoContent());
     }
 
     @Test
