@@ -1,6 +1,7 @@
 package com.gamestore.gamestore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.model.Game;
 import com.gamestore.gamestore.repository.GameRepository;
 import com.gamestore.gamestore.service.ServiceLayer;
@@ -108,6 +109,21 @@ public class GamesControllerTest {
     }
 
     @Test
+    public void shouldRespondWithUnprocessableWhenGameCreateRequestIsBad() throws Exception {
+        // game1 -
+        Game game1 = new Game();
+        String inputGame1 = mapper.writeValueAsString(game1);
+
+
+        mockMvc.perform(post("/games")
+                        .content(inputGame1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());       // Assert HttpStatus 422 Response - Unprocessable Entity
+
+    }
+
+    @Test
     public void shouldReturn404WhenFindingInvalidId() throws Exception {
         mockMvc.perform(get("/games/999"))
                 .andDo(print())
@@ -121,6 +137,13 @@ public class GamesControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturn404WhenDeletingGameWithInvalidId() throws Exception {
+        mockMvc.perform(delete("/games/139875"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 }

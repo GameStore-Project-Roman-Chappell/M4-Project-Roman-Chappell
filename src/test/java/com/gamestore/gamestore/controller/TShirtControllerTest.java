@@ -1,6 +1,7 @@
 package com.gamestore.gamestore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.model.TShirt;
 import com.gamestore.gamestore.repository.TShirtRepository;
 import com.gamestore.gamestore.service.ServiceLayer;
@@ -107,6 +108,21 @@ public class TShirtControllerTest {
     }
 
     @Test
+    public void shouldRespondWithUnprocessableWhenTShirtCreateRequestIsBad() throws Exception {
+        // tshirt1 -
+        TShirt tshirt1 = new TShirt();
+        String inputTShirt1 = mapper.writeValueAsString(tshirt1);
+
+
+        mockMvc.perform(post("/tshirts")
+                        .content(inputTShirt1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());       // Assert HttpStatus 422 Response - Unprocessable Entity
+
+    }
+
+    @Test
     public void shouldReturn404WhenFindingInvalidId() throws Exception {
         mockMvc.perform(get("/tshirts/999"))
                 .andDo(print())
@@ -120,5 +136,12 @@ public class TShirtControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturn404WhenDeletingTShirtWithInvalidId() throws Exception {
+        mockMvc.perform(delete("/tshirts/139875"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }
