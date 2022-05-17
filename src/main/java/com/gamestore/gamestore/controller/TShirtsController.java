@@ -1,7 +1,9 @@
 package com.gamestore.gamestore.controller;
 
 
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.exception.UnprocessableRequestException;
+import com.gamestore.gamestore.model.Game;
 import com.gamestore.gamestore.model.TShirt;
 import com.gamestore.gamestore.service.ServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class TShirtsController {
     @ResponseStatus(HttpStatus.OK)
     public TShirt findTShirtById(@PathVariable int id) {
         TShirt returnTShirt = serviceLayer.findTShirtById(id);
+        if(returnTShirt == null){
+            throw new ProductNotFoundException("No T Shirt with Id " + id + " was found");
+        }
         return returnTShirt;
     }
 

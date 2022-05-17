@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.controller;
 
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.Game;
 import com.gamestore.gamestore.service.ServiceLayer;
@@ -38,7 +39,11 @@ public class GamesController {
     @RequestMapping(value="/{id}", method=RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Game findGameById(@PathVariable int id) {
-        return serviceLayer.findGame(id);
+        Game game = serviceLayer.findGame(id);
+        if(game == null){
+            throw new ProductNotFoundException("No Game with Id " + id + " was found");
+        }
+        return game;
     }
 
     @RequestMapping(method = RequestMethod.POST)
