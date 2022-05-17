@@ -115,7 +115,7 @@ public class GamesControllerTest {
     }
 
     @Test
-    public void shouldRetur422WhenPutRequestContainsInvalidIds() throws Exception {
+    public void shouldReturn422WhenPutRequestContainsInvalidIds() throws Exception {
         mockMvc.perform(put("/games/999")
                 .content(outputGameString)
                 .contentType(MediaType.APPLICATION_JSON))

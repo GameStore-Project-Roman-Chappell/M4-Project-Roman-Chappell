@@ -100,6 +100,25 @@ public class TShirtControllerTest {
     }
 
     @Test
-    public void shouldDelete
+    public void shouldDeleteShirt() throws Exception {
+        mockMvc.perform(delete("/tshirts/1"))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+    }
 
+    @Test
+    public void shouldReturn404WhenFindingInvalidId() throws Exception {
+        mockMvc.perform(get("/tshirts/999"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturn422WhenPutRequestContainsInvalidIds() throws Exception {
+        mockMvc.perform(put("/tshirts/999")
+                        .content(outputShirtString)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
 }
