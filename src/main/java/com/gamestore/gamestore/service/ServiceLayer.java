@@ -195,7 +195,7 @@ public class ServiceLayer {
         // Get the tax rate based on the order state and perform the calculation based on the subtotal
         System.out.println("Finding tax rate.");
         BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
-        BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal());
+        BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal()).setScale(2, BigDecimal.ROUND_CEILING);
         System.out.println("Tax Amount: "+taxValue);
         invoice.setTax(taxValue);
 
