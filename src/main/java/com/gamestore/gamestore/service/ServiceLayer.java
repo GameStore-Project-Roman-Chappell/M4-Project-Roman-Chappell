@@ -125,6 +125,7 @@ public class ServiceLayer {
 // ------------------------  INVOICE SECTION   ----------------------//
     @Transactional
     public InvoiceViewModel createInvoiceReturnViewModel(Invoice invoice){
+        System.out.println("Begin createInvoiceReturnViewModel with:" + invoice);
         // Add the fee based on the item type, and check the Quantity of the Item Id Available before Transaction
         String type = invoice.getItemType();
         Integer itemId = invoice.getItemId();
@@ -135,6 +136,9 @@ public class ServiceLayer {
                 if(shirt.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                 }else{
+                    System.out.println("T Shirt item Type found for Invoice");
+                    // Set Unit Price off of the item from the DB, not from the input received
+                    invoice.setUnitPrice(shirt.getPrice());
                     // Get the Fee from the ProcessingFee for tshirt
                     ProcessingFee fee = feeRepository.findByProductType("tshirt");
                     invoice.setProcessingFee(fee.getFee());
@@ -143,12 +147,16 @@ public class ServiceLayer {
                     BigDecimal subtotal = shirt.getPrice().multiply(qty);
                     invoice.setSubtotal(subtotal);
                 }
+                System.out.println("Exit Swtich for Item Type with Invoice: "+invoice);
                 break;
             case "console":
                 Console console = consoleRepository.getById(itemId);
                 if(console.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                 }else{
+                    // Set Unit Price off of the item from the DB, not from the input received
+                    invoice.setUnitPrice(console.getPrice());
+                    // Get the Fee from the ProcessingFee for console
                     ProcessingFee fee = feeRepository.findByProductType("console");
                     invoice.setProcessingFee(fee.getFee());
                     // Calculate the subtotal abd set it to the invoice
@@ -162,6 +170,9 @@ public class ServiceLayer {
                 if(game.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                 }else{
+                    // Set Unit Price off of the item from the DB, not from the input received
+                    invoice.setUnitPrice(game.getPrice());
+                    // Get the Fee from the ProcessingFee for game
                     ProcessingFee fee = feeRepository.findByProductType("game");
                     invoice.setProcessingFee(fee.getFee());
                     // Calculate the subtotal abd set it to the invoice
@@ -174,6 +185,7 @@ public class ServiceLayer {
                 //Add Error, bad type
         }
         // Add Extra Processing fee for Large Order
+        System.out.println("Checking for large order processing fee.");
         if(invoice.getQuantity() >= 10){
             BigDecimal additionalFee = new BigDecimal(15.49);
             BigDecimal processingFee = invoice.getProcessingFee().add(additionalFee);
@@ -181,23 +193,29 @@ public class ServiceLayer {
         }
 
         // Get the tax rate based on the order state and perform the calculation based on the subtotal
+        System.out.println("Finding tax rate.");
         BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
         BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal());
+        System.out.println("Tax Amount: "+taxValue);
         invoice.setTax(taxValue);
 
+
         // Add the total
-        BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getProcessingFee());
+        BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getSubtotal());
         invoice.setTotal(total);
 
         // Save, build view Model, and Return the Invoice
-        Invoice createdInvoice = invoiceRepository.save(invoice);
-        InvoiceViewModel ivm = buildInvoiceViewModel(createdInvoice);
+        System.out.println("Saving Invoice Built" + invoice);
+        invoiceRepository.save(invoice);
+        Optional<Invoice> createdInvoice = invoiceRepository.findById(invoice.getId());
+        InvoiceViewModel ivm = buildInvoiceViewModel(createdInvoice.get());
+        System.out.println("Invoice View Model Created: " + ivm);
         return ivm;
     }
 
 
     private InvoiceViewModel buildInvoiceViewModel(Invoice invoice) {
-
+        System.out.println("Building Invoice View Model: "+invoice);
         InvoiceViewModel ivm = new InvoiceViewModel(invoice);
 
         String type = invoice.getItemType();
@@ -218,7 +236,7 @@ public class ServiceLayer {
                 //error
                 break;
         }
-
+        System.out.println("Completed View Model: " + ivm);
         // Return the InvoiceViewModel
         return ivm;
     }
