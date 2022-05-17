@@ -2,6 +2,7 @@ package com.gamestore.gamestore.service;
 
 import com.gamestore.gamestore.model.*;
 import com.gamestore.gamestore.repository.*;
+import com.gamestore.gamestore.viewmodel.InvoiceViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -123,7 +124,7 @@ public class ServiceLayer {
     }
 // ------------------------  INVOICE SECTION   ----------------------//
     @Transactional
-    public Invoice createInvoice(Invoice invoice){
+    public InvoiceViewModel createInvoiceReturnViewModel(Invoice invoice){
         // Add the fee based on the item type, and check the Quantity of the Item Id Available before Transaction
         String type = invoice.getItemType();
         Integer itemId = invoice.getItemId();
@@ -188,10 +189,37 @@ public class ServiceLayer {
         BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getProcessingFee());
         invoice.setTotal(total);
 
-        // Save and Return the Invoice
-
-
-        return invoice;
+        // Save, build view Model, and Return the Invoice
+        Invoice createdInvoice = invoiceRepository.save(invoice);
+        InvoiceViewModel ivm = buildInvoiceViewModel(createdInvoice);
+        return ivm;
     }
 
+
+    private InvoiceViewModel buildInvoiceViewModel(Invoice invoice) {
+
+        InvoiceViewModel ivm = new InvoiceViewModel(invoice);
+
+        String type = invoice.getItemType();
+        switch(type) {
+            case "tshirt":
+                TShirt shirt = tShirtRepository.getById(invoice.getItemId());
+                ivm.setTshirt(shirt);
+                break;
+            case "console":
+                Console console = consoleRepository.getById(invoice.getItemId());
+                ivm.setConsole(console);
+                break;
+            case "game":
+                Game game = gameRepository.getById(invoice.getItemId());
+                ivm.setGame(game);
+                break;
+            default:
+                //error
+                break;
+        }
+
+        // Return the InvoiceViewModel
+        return ivm;
+    }
 }
