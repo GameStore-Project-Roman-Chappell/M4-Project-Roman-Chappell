@@ -13,7 +13,7 @@ public class ControllerExceptionHandler {
 
 
     @ExceptionHandler(value = UnprocessableRequestException.class)
-    public ResponseEntity<CustomErrorResponse> handleProductNotFoundException(UnprocessableRequestException ure) {
+    public ResponseEntity<CustomErrorResponse> handleUnprocessableException(UnprocessableRequestException ure) {
         CustomErrorResponse error = new CustomErrorResponse(ure.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         ResponseEntity<CustomErrorResponse> responseEntity = new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
         return responseEntity;
