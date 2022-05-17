@@ -63,7 +63,7 @@ public class Invoice {
     @NotNull(message="Invoice must have a unitPrice.")
     @Min(value = 0, message="Invoice unitPrice must be a positive value.")
     @Column(name="unit_price", columnDefinition = "Decimal(5,2)")
-    private BigDecimal unitPrice;
+    private BigDecimal unitPrice = new BigDecimal(0);
 
     @NotNull(message="Invoice must have a quantity.")
     @Min(value = 0, message = "Invoice quantity can not be negative.")
@@ -72,25 +72,35 @@ public class Invoice {
     @NotNull(message="Invoice must have a subtotal.")
     @Min(value = 0, message="Invoice subtotal must be a positive value.")
     @Column(name="subtotal", columnDefinition = "Decimal(5,2)")
-    private BigDecimal subtotal;
+    private BigDecimal subtotal = new BigDecimal(0);
 
     @NotNull(message="Invoice must have a tax.")
     @Min(value = 0, message="Invoice tax must be a positive value.")
     @Column(name="tax", columnDefinition = "Decimal(5,2)")
-    private BigDecimal tax;
+    private BigDecimal tax = new BigDecimal(0);
 
     @NotNull(message="Invoice must have a processingFee.")
     @Min(value = 0, message="Invoice processingFee must be a positive value.")
     @Column(name="processing_fee", columnDefinition = "Decimal(5,2)")
-    private BigDecimal processingFee;
+    private BigDecimal processingFee = new BigDecimal(0);;
 
     @NotNull(message="Invoice must have a total.")
     @Min(value = 0, message="Invoice total must be a positive value.")
     @Column(name="total", columnDefinition = "Decimal(5,2)")
-    private BigDecimal total;
+    private BigDecimal total = new BigDecimal(0);
 
-    // CONSTRUCTORS - NO FIELD, ALL-BUT-ID, ALL FIELD
+    // CONSTRUCTORS - NO FIELD, USER-FIELD, ALL-BUT-ID, ALL FIELD
     public Invoice(){}
+
+    public Invoice(String name, String street, String city, String state, String zipcode, String itemType, Integer itemId){
+        this.name = name;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zipcode = zipcode;
+        this.itemType = itemType;
+        this.itemId = itemId;
+    }
 
     public Invoice(String name, String street, String city, String state, String zipcode, String itemType, Integer itemId, BigDecimal unitPrice, Integer quantity, BigDecimal subtotal, BigDecimal tax, BigDecimal processingFee, BigDecimal total) {
         this.name = name;

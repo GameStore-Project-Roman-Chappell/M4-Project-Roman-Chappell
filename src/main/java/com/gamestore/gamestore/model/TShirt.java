@@ -1,5 +1,7 @@
 package com.gamestore.gamestore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name="t_shirt")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TShirt {
 
     // FIELDS
