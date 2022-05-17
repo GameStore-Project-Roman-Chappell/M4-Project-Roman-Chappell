@@ -1,7 +1,9 @@
 package com.gamestore.gamestore.controller;
 
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.Console;
+import com.gamestore.gamestore.model.Game;
 import com.gamestore.gamestore.service.ServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,8 +33,12 @@ public class ConsolesController {
     @ResponseStatus(HttpStatus.OK)
     public Console findConsoleById(@PathVariable int id) {
         Console returnConsole = serviceLayer.findConsole(id);
-        return returnConsole;
+
+        if(returnConsole == null){
+            throw new ProductNotFoundException("No Console with Id " + id + " was found");
         }
+        return returnConsole;
+    }
 
     @RequestMapping( method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
