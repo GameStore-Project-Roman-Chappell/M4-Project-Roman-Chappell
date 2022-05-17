@@ -101,6 +101,13 @@ public class GamesControllerTest {
     }
 
     @Test
+    public void shouldDeleteGame() throws Exception {
+        mockMvc.perform(delete("/games/1"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     public void shouldReturn404WhenFindingInvalidId() throws Exception {
         mockMvc.perform(get("/games/999"))
                 .andDo(print())
