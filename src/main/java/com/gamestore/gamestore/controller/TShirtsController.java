@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,8 @@ public class TShirtsController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public TShirt createTShirt(@RequestBody TShirt newTShirt) {
+    public TShirt createTShirt(@Valid @RequestBody TShirt newTShirt) {
+
         return serviceLayer.saveTShirt(newTShirt);
     }
 
