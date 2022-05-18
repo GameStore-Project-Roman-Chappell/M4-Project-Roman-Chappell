@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Game {
     // FIELDS
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="game_id")
     private Integer id;
 
