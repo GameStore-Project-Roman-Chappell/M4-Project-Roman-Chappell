@@ -200,14 +200,14 @@ public class ServiceLayer {
 
         // Get the tax rate based on the order state and perform the calculation based on the subtotal
         System.out.println("Finding tax rate.");
-        Optional<BigDecimal> taxRate = Optional.of(taxRateRepository.findByState(invoice.getState()).getRate());
-        if(!taxRate.isPresent()){
+        try {
+            BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
+            BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal()).setScale(2, BigDecimal.ROUND_CEILING);
+            System.out.println("Tax Amount: "+taxValue);
+            invoice.setTax(taxValue);
+        }catch (Exception e){
             throw new IllegalArgumentException("No tax rate found for "+ invoice.getState() + ". State must be a valid state abbreviation.");
         }
-        BigDecimal taxValue = taxRate.get().multiply(invoice.getSubtotal()).setScale(2, BigDecimal.ROUND_CEILING);
-        System.out.println("Tax Amount: "+taxValue);
-        invoice.setTax(taxValue);
-
 
         // Add the total
         BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getSubtotal());
