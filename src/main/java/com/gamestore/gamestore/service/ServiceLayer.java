@@ -106,7 +106,7 @@ public class ServiceLayer {
     }
     // DELETE METHOD
     public void deleteTShirt(int id) {
-        Optional<TShirt> opt = tShirtRepository.findById(tShirt.getId());
+        Optional<TShirt> opt = tShirtRepository.findById(id);
         if(opt.isPresent()){
             tShirtRepository.deleteById(id);
         }else {
