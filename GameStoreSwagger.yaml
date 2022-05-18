@@ -1,0 +1,584 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /tshirts/{id}:
+    get:
+      description: Retrieves a specific tshirt based on the pathariable. If there is no tshirt for the id given, an error response is returned.
+      tags:
+        - t-shirts-controller
+      operationId: findTShirtById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TShirt'
+              example:
+                id: 1
+                size: Large
+                color: Blue
+                description: A soft cotton-poly blend shirt emblazoned with the triforce symbol.
+                price: 8.99
+                quantity: 12
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMsg: No T Shirt with Id 52 was found
+                status: 404
+                errorCode: 404 NOT_FOUND
+                timestamp: '2022-05-12T17:57:34.614'
+        
+                
+    put:
+      description: Updates a specific tshirt based on the pathariable and the requestbody. If the update requestbody object contains errors or if the id in the pathvariable does not match the tshirt in the requestbody to update an error response is returned. There is no response body, only a status response.
+      tags:
+        - t-shirts-controller
+      operationId: updateTShirt
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TShirt'
+            example:
+              id: 1
+              size: Large
+              color: Black
+              description: A soft cotton-poly blend shirt emblazoned with the triforce symbol.
+              price: 8.99
+              quantity: 13
+        required: true
+      responses:
+        '200':
+          description: OK. If the request was successful.
+        '422':
+          description: Unprocessable Entity. If the request body was invalid or there was a mismatch in the pathvariable and request id.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMessage: T-Shirt Id in request must match URL path id
+                errorStatus: 422
+                errorCode: 422 UNPROCESSABLE_ENTITY
+                timestamp: '2022-05-12T17:57:34.614'
+    delete:
+      description: Deletes a specific tshirt based on the pathariable. If successful, no content and status 204 is returned, if the id does not exist, a 404 status is returned.
+      tags:
+        - t-shirts-controller
+      operationId: deleteTShirt
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: No Content. Successful Request.
+  /games/{id}:
+    get:
+      tags:
+        - games-controller
+      operationId: findGameById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Game'
+    put:
+      tags:
+        - games-controller
+      operationId: updateGame
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Game'
+        required: true
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+        - games-controller
+      operationId: deleteGame
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: No Content
+  /consoles/{id}:
+    get:
+      tags:
+        - consoles-controller
+      operationId: findConsoleById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Console'
+    put:
+      tags:
+        - consoles-controller
+      operationId: updateConsole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Console'
+        required: true
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+        - consoles-controller
+      operationId: deleteConsole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: No Content
+  /tshirts:
+    get:
+      description: Retrieves a JSON List of all t-shirts in the database.
+      tags:
+        - t-shirts-controller
+      operationId: getAllTShirts
+      parameters:
+        - name: color
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TShirt'
+    post:
+      tags:
+        - t-shirts-controller
+      operationId: createTShirt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TShirt'
+            example:
+              size: Large
+              color: Blue
+              description: A soft cotton-poly blend shirt emblazoned with the triforce symbol.
+              price: 8.99
+              quantity: 12
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TShirt'
+              example:
+                id: 1
+                size: Large
+                color: Blue
+                description: A soft cotton-poly blend shirt emblazoned with the triforce symbol.
+                price: 8.99
+                quantity: 12
+                
+  /purchase:
+    post:
+      tags:
+        - invoice-controller
+      operationId: requestItemPurchase
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Invoice'
+  
+  /games:
+    get:
+      description: Retrieves a JSON List of all games in the database.
+      tags:
+        - games-controller
+      operationId: getAllGames
+      parameters:
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: studio
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: esrb
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+    post:
+      tags:
+        - games-controller
+      operationId: createGame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Game'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Game'
+  /consoles:
+    get:
+      tags:
+        - consoles-controller
+      operationId: getAllConsoles
+      parameters:
+        - name: manufacturer
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Console'
+    post:
+      tags:
+        - consoles-controller
+      operationId: createConsole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Console'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Console'
+components:
+  schemas:
+    TShirt:
+      description: Represents a single T Shirt SKU with a specific variation (size, color, etc) and contains the inventory quantity. All fields are required.
+      required:
+        - color
+        - description
+        - price
+        - quantity
+        - size
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        size:
+          maxLength: 20
+          minLength: 0
+          type: string
+        color:
+          maxLength: 20
+          minLength: 0
+          type: string
+        description:
+          type: string
+        price:
+          minimum: 0
+          type: number
+        quantity:
+          minimum: 0
+          type: integer
+          format: int32
+    Game:
+      required:
+        - description
+        - esrbRating
+        - price
+        - quantity
+        - studio
+        - title
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          maxLength: 50
+          minLength: 0
+          type: string
+        esrbRating:
+          maxLength: 50
+          minLength: 0
+          type: string
+        description:
+          type: string
+        studio:
+          maxLength: 50
+          minLength: 0
+          type: string
+        price:
+          minimum: 0
+          type: number
+        quantity:
+          minimum: 0
+          type: integer
+          format: int32
+    Console:
+      required:
+        - manufacturer
+        - model
+        - price
+        - quantity
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        model:
+          maxLength: 50
+          minLength: 0
+          type: string
+        manufacturer:
+          maxLength: 50
+          minLength: 0
+          type: string
+        memoryAmount:
+          maxLength: 20
+          minLength: 0
+          type: string
+        processor:
+          maxLength: 20
+          minLength: 0
+          type: string
+        price:
+          minimum: 0
+          type: number
+        quantity:
+          minimum: 0
+          type: integer
+          format: int32
+    Invoice:
+      required:
+        - city
+        - itemId
+        - itemType
+        - name
+        - processingFee
+        - quantity
+        - state
+        - street
+        - subtotal
+        - tax
+        - total
+        - unitPrice
+        - zipcode
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          maxLength: 80
+          minLength: 0
+          type: string
+        street:
+          maxLength: 30
+          minLength: 0
+          type: string
+        city:
+          maxLength: 30
+          minLength: 0
+          type: string
+        state:
+          maxLength: 2
+          minLength: 2
+          type: string
+        zipcode:
+          maxLength: 5
+          minLength: 5
+          type: string
+        itemType:
+          maxLength: 20
+          minLength: 0
+          type: string
+        itemId:
+          minimum: 0
+          type: integer
+          format: int32
+        unitPrice:
+          minimum: 0
+          type: number
+        quantity:
+          minimum: 0
+          type: integer
+          format: int32
+        subtotal:
+          minimum: 0
+          type: number
+        tax:
+          minimum: 0
+          type: number
+        processingFee:
+          minimum: 0
+          type: number
+        total:
+          minimum: 0
+          type: number
+    CustomErrorResponse:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        errorStatus:
+          type: integer
+          format: int32
+        errorCode:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    InvoiceViewModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipcode:
+          type: string
+        tshirt:
+          $ref: '#/components/schemas/TShirt'
+        console:
+          $ref: '#/components/schemas/Console'
+        game:
+          $ref: '#/components/schemas/Game'
+        unitPrice:
+          type: number
+        quantity:
+          type: integer
+          format: int32
+        subtotal:
+          type: number
+        tax:
+          type: number
+        processingFee:
+          type: number
+        total:
+          type: number
