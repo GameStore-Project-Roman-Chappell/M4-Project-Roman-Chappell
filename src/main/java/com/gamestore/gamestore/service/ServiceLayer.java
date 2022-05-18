@@ -50,11 +50,22 @@ public class ServiceLayer {
     }
 
     public void updateConsole(Console console) {
-        consoleRepository.save(console);
+        Optional<Console> opt = consoleRepository.findById(console.getId());
+        if(opt.isPresent()){
+            consoleRepository.save(console);
+        }else {
+            throw new ProductNotFoundException("Cannot Update Console, no console found for Id: " + console.getId());
+        }
     }
 
     public void deleteConsole(int id) {
-        consoleRepository.deleteById(id);
+        Optional<Console> opt = consoleRepository.findById(id);
+        if(opt.isPresent()){
+            consoleRepository.deleteById(id);
+        }else {
+            throw new ProductNotFoundException("Cannot Delete Console, no console found for Id: " + id);
+        }
+
     }
 
 // ------------------------   T SHIRTS SECTION   ----------------------//
@@ -86,16 +97,27 @@ public class ServiceLayer {
 
     // UPDATE METHOD
     public void updateTShirt(TShirt tShirt) {
-        tShirtRepository.save(tShirt);
+        Optional<TShirt> opt = tShirtRepository.findById(tShirt.getId());
+        if(opt.isPresent()){
+            tShirtRepository.save(tShirt);
+        }else {
+            throw new ProductNotFoundException("Cannot Update TShirt, no shirt found for Id: " + tShirt.getId());
+        }
     }
     // DELETE METHOD
     public void deleteTShirt(int id) {
-        tShirtRepository.deleteById(id);
+        Optional<TShirt> opt = tShirtRepository.findById(tShirt.getId());
+        if(opt.isPresent()){
+            tShirtRepository.deleteById(id);
+        }else {
+            throw new ProductNotFoundException("Cannot Delete TShirt, no shirt found for Id: " + id);
+        }
     }
 
 // ------------------------  GAMES SECTION   ----------------------//
 //    Games CRUD
     public Game saveGame(Game game) {
+
         return gameRepository.save(game);
     }
 
@@ -119,11 +141,22 @@ public class ServiceLayer {
     }
 
     public void updateGame(Game game) {
-        gameRepository.save(game);
+        Optional<Game> opt = gameRepository.findById(game.getId());
+        if(opt.isPresent()){
+            gameRepository.save(game);
+        }else {
+            throw new ProductNotFoundException("Cannot Update Game, no game found for Id: " + game.getId());
+        }
     }
 
     public void deleteGame(int id) {
-        gameRepository.deleteById(id);
+        Optional<Game> opt = gameRepository.findById(id);
+        if(opt.isPresent()){
+            gameRepository.deleteById(id);
+        }else {
+            throw new ProductNotFoundException("Cannot Delete Game, no game found for Id: " + id);
+        }
+
     }
 // ------------------------  INVOICE SECTION   ----------------------//
     @Transactional
