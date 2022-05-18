@@ -15,5 +15,14 @@ Swagger OpenAPI Documentation is contained in the file:
 There are example properties which must be replaced in order to run the application contained in the file below. It must be renamed to application.properties:
  - example.properties
 
+In order to match with the specification schema, we do not create or update the database through the application. We use a set of sql scripts to create the schema and insert given data into it before using the application. They are contained in the resources/static directory.
+
+- This script contains the schema and all data tables from the specifications:
+  - schema.sql
+- This script inserts the data for product processing fees and state tax rates:
+  - tax-fee-seeder.sql
+- This Script migrates our starter data of products:
+  - migrations.sql
+
 ### Matching Front End
 The repository for a matching front end React app set up to use this API is contained <a href="https://github.com/GameStore-Project-Roman-Chappell/gamestore-front-end" rel="nofollow">HERE</a>
