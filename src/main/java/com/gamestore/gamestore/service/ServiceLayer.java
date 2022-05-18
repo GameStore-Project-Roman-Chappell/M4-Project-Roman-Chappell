@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.service;
 
+import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.*;
 import com.gamestore.gamestore.repository.*;
 import com.gamestore.gamestore.viewmodel.InvoiceViewModel;
@@ -125,7 +126,7 @@ public class ServiceLayer {
     }
 // ------------------------  INVOICE SECTION   ----------------------//
     @Transactional
-    public InvoiceViewModel createInvoiceReturnViewModel(Invoice invoice){
+    public Invoice createInvoiceAndReturn(Invoice invoice){
         System.out.println("Begin createInvoiceReturnViewModel with:" + invoice);
         // Add the fee based on the item type, and check the Quantity of the Item Id Available before Transaction
         String type = invoice.getItemType();
@@ -136,6 +137,8 @@ public class ServiceLayer {
                 TShirt shirt = tShirtRepository.getById(itemId);
                 if(shirt.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
+                    throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + shirt.getQuantity() + " of that item in inventory.");
+
                 }else{
                     System.out.println("T Shirt item Type found for Invoice");
                     // Set Unit Price off of the item from the DB, not from the input received
@@ -154,6 +157,7 @@ public class ServiceLayer {
                 Console console = consoleRepository.getById(itemId);
                 if(console.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
+                    throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + console.getQuantity() + " of that item in inventory.");
                 }else{
                     // Set Unit Price off of the item from the DB, not from the input received
                     invoice.setUnitPrice(console.getPrice());
@@ -170,6 +174,7 @@ public class ServiceLayer {
                 Game game = gameRepository.getById(itemId);
                 if(game.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
+                    throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + game.getQuantity() + " of that item in inventory.");
                 }else{
                     // Set Unit Price off of the item from the DB, not from the input received
                     invoice.setUnitPrice(game.getPrice());
@@ -183,7 +188,7 @@ public class ServiceLayer {
                 }
                 break;
             default:
-                //Add Error, bad type
+                throw new IllegalArgumentException("No item type of " + invoice.getItemType() + " was found. Please use item type of: tshirt, console, or game.");
         }
         // Add Extra Processing fee for Large Order
         System.out.println("Checking for large order processing fee.");
@@ -195,11 +200,14 @@ public class ServiceLayer {
 
         // Get the tax rate based on the order state and perform the calculation based on the subtotal
         System.out.println("Finding tax rate.");
-        BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
-        BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal()).setScale(2, BigDecimal.ROUND_CEILING);
-        System.out.println("Tax Amount: "+taxValue);
-        invoice.setTax(taxValue);
-
+        try {
+            BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
+            BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal()).setScale(2, BigDecimal.ROUND_CEILING);
+            System.out.println("Tax Amount: "+taxValue);
+            invoice.setTax(taxValue);
+        }catch (Exception e){
+            throw new IllegalArgumentException("No tax rate found for "+ invoice.getState() + ". State must be a valid state abbreviation.");
+        }
 
         // Add the total
         BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getSubtotal());
@@ -209,9 +217,7 @@ public class ServiceLayer {
         System.out.println("Saving Invoice Built" + invoice);
         invoiceRepository.save(invoice);
         Optional<Invoice> createdInvoice = invoiceRepository.findById(invoice.getId());
-        InvoiceViewModel ivm = buildInvoiceViewModel(createdInvoice.get());
-        System.out.println("Invoice View Model Created: " + ivm);
-        return ivm;
+        return createdInvoice.get();
     }
 
 

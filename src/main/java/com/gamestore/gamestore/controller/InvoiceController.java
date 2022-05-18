@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 
 
 @RestController
@@ -18,8 +19,8 @@ public class InvoiceController {
 
     @RequestMapping(value="/purchase", method= RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public InvoiceViewModel requestItemPurchase(@RequestBody Invoice invoice){
-        return serviceLayer.createInvoiceReturnViewModel(invoice);
+    public Invoice requestItemPurchase(@Valid @RequestBody Invoice invoice){
+        return serviceLayer.createInvoiceAndReturn(invoice);
     }
 
     @RequestMapping(value="/invoices", method= RequestMethod.POST)
