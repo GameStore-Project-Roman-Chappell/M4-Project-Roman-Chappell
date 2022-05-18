@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.service;
 
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.*;
 import com.gamestore.gamestore.repository.*;
@@ -134,7 +135,14 @@ public class ServiceLayer {
         Integer qtyRequested = invoice.getQuantity();
         switch(type){
             case "tshirt":
-                TShirt shirt = tShirtRepository.getById(itemId);
+                // Get the tshirt as an optional, in order to validate the ID of the tshirt or throw an error
+                Optional<TShirt> tshirt = tShirtRepository.findById(itemId);
+                TShirt shirt = new TShirt();
+                if(tshirt.isPresent()){
+                    shirt = tshirt.get();
+                }else{
+                    throw new ProductNotFoundException("T Shirt Not Found with ID: "+invoice.getItemId());
+                }
                 if(shirt.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + shirt.getQuantity() + " of that item in inventory.");
@@ -154,7 +162,14 @@ public class ServiceLayer {
                 System.out.println("Exit Swtich for Item Type with Invoice: "+invoice);
                 break;
             case "console":
-                Console console = consoleRepository.getById(itemId);
+                // Get the console as an optional, in order to validate the ID of the console or throw an error
+                Optional<Console> consoleOpt= consoleRepository.findById(itemId);
+                Console console = new Console();
+                if(consoleOpt.isPresent()){
+                    console = consoleOpt.get();
+                }else{
+                    throw new ProductNotFoundException("Console Not Found with ID: "+ invoice.getItemId());
+                }
                 if(console.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + console.getQuantity() + " of that item in inventory.");
@@ -171,7 +186,14 @@ public class ServiceLayer {
                 }
                 break;
             case "game":
-                Game game = gameRepository.getById(itemId);
+                // Get the game as an optional, in order to validate the ID of the game or throw an error
+                Optional<Game> gameOpt= gameRepository.findById(itemId);
+                Game game = new Game();
+                if(gameOpt.isPresent()){
+                    game = gameOpt.get();
+                }else{
+                    throw new ProductNotFoundException("Game Not Found with ID: "+ invoice.getItemId());
+                }
                 if(game.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + game.getQuantity() + " of that item in inventory.");
