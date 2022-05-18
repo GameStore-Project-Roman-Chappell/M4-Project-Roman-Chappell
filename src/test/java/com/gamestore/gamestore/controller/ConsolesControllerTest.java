@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.repository.ConsoleRepository;
@@ -87,6 +88,8 @@ public class ConsolesControllerTest {
     }
 
 
+
+
     @Test
     public void shouldGetArrayOfConsoles() throws Exception {
         mockMvc.perform(get("/consoles"))
@@ -96,7 +99,7 @@ public class ConsolesControllerTest {
     }
 
     @Test
-    public void shouldGetConsolesById() throws Exception {
+    public void shouldGetConsoleById() throws Exception {
         mockMvc.perform(get("/consoles/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -119,21 +122,45 @@ public class ConsolesControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+
+    // Someone needs to fully appreciate this method name, it could have been longer/better
     @Test
-    public void shouldReturn404WhenFindingInvalidId() throws Exception {
+    public void shouldRespondWithUnprocessableWhenConsoleCreateRequestIsBad() throws Exception {
+        // console1 - Only First Operand Included
+        Console console1 = new Console();
+        String inputConsole1 = mapper.writeValueAsString(console1);
+
+
+        mockMvc.perform(post("/consoles")
+                        .content(inputConsole1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());       // Assert HttpStatus 422 Response - Unprocessable Entity
+
+    }
+
+    @Test
+    public void shouldReturn404WhenFindingConsoleWithInvalidId() throws Exception {
         mockMvc.perform(get("/consoles/999"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void shouldReturn422WhenPutRequestContainsNonMatchingIds() throws Exception {
+    public void shouldReturn422WhenUpdateRequestContainsNonMatchingIds() throws Exception {
         mockMvc.perform(put("/consoles/999")
                 .content(inputConsoleString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
 
+    }
+
+    @Test
+    public void shouldReturn404WhenDeletingConsoleWithInvalidId() throws Exception {
+        mockMvc.perform(delete("/consoles/139875"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 }

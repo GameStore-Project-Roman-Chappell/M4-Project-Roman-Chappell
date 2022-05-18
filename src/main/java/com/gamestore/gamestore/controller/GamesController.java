@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -48,7 +49,8 @@ public class GamesController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Game createGame(@RequestBody Game game) {
+    public Game createGame(@Valid @RequestBody Game game) {
+
         return serviceLayer.saveGame(game);
     }
 
