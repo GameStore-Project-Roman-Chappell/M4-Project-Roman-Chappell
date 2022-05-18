@@ -125,7 +125,7 @@ public class ServiceLayer {
     }
 // ------------------------  INVOICE SECTION   ----------------------//
     @Transactional
-    public InvoiceViewModel createInvoiceReturnViewModel(Invoice invoice){
+    public Invoice createInvoiceAndReturn(Invoice invoice){
         System.out.println("Begin createInvoiceReturnViewModel with:" + invoice);
         // Add the fee based on the item type, and check the Quantity of the Item Id Available before Transaction
         String type = invoice.getItemType();
@@ -209,9 +209,7 @@ public class ServiceLayer {
         System.out.println("Saving Invoice Built" + invoice);
         invoiceRepository.save(invoice);
         Optional<Invoice> createdInvoice = invoiceRepository.findById(invoice.getId());
-        InvoiceViewModel ivm = buildInvoiceViewModel(createdInvoice.get());
-        System.out.println("Invoice View Model Created: " + ivm);
-        return ivm;
+        return createdInvoice.get();
     }
 
 

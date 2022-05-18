@@ -18,8 +18,8 @@ public class InvoiceController {
 
     @RequestMapping(value="/purchase", method= RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public InvoiceViewModel requestItemPurchase(@RequestBody Invoice invoice){
-        return serviceLayer.createInvoiceReturnViewModel(invoice);
+    public Invoice requestItemPurchase(@RequestBody Invoice invoice){
+        return serviceLayer.createInvoiceAndReturn(invoice);
     }
 
     @RequestMapping(value="/invoices", method= RequestMethod.POST)
