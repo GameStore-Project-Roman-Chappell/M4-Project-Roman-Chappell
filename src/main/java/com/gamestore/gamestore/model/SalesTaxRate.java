@@ -21,7 +21,7 @@ public class SalesTaxRate {
 
     @NotNull(message="Sales tax rate must have a rate.")
     @Min(value = 0, message="Sales tax rate must be a positive value.")
-    @Column(name="tax", columnDefinition = "Decimal(5,2)")
+    @Column(name="rate", columnDefinition = "Decimal(5,2)")
     private BigDecimal rate;
 
     public SalesTaxRate(){}

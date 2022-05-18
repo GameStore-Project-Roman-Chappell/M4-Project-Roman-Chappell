@@ -7,7 +7,7 @@ VALUES('console', 14.99),
        ('game',1.49);
 
 # SET ALL 50 TAX RATES
-INSERT INTO sales_tax_rate(state, tax)
+INSERT INTO sales_tax_rate(state, rate)
 VALUES ('AL',0.05),
        ('AK',0.06),
        ('AZ',0.04),
