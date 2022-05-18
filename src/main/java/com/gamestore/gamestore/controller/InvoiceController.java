@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -25,7 +26,7 @@ public class InvoiceController {
 
     @RequestMapping(value="/invoices", method= RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public InvoiceViewModel viewInvoices(){
+    public List<Invoice> viewInvoices(){
         return null; //serviceLayer.showAllInvoiceViewModels();
     }
 }
