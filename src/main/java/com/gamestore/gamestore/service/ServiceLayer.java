@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.service;
 
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.*;
 import com.gamestore.gamestore.repository.*;
@@ -49,11 +50,22 @@ public class ServiceLayer {
     }
 
     public void updateConsole(Console console) {
-        consoleRepository.save(console);
+        Optional<Console> opt = consoleRepository.findById(console.getId());
+        if(opt.isPresent()){
+            consoleRepository.save(console);
+        }else {
+            throw new ProductNotFoundException("Cannot Update Console, no console found for Id: " + console.getId());
+        }
     }
 
     public void deleteConsole(int id) {
-        consoleRepository.deleteById(id);
+        Optional<Console> opt = consoleRepository.findById(id);
+        if(opt.isPresent()){
+            consoleRepository.deleteById(id);
+        }else {
+            throw new ProductNotFoundException("Cannot Delete Console, no console found for Id: " + id);
+        }
+
     }
 
 // ------------------------   T SHIRTS SECTION   ----------------------//
@@ -85,16 +97,27 @@ public class ServiceLayer {
 
     // UPDATE METHOD
     public void updateTShirt(TShirt tShirt) {
-        tShirtRepository.save(tShirt);
+        Optional<TShirt> opt = tShirtRepository.findById(tShirt.getId());
+        if(opt.isPresent()){
+            tShirtRepository.save(tShirt);
+        }else {
+            throw new ProductNotFoundException("Cannot Update TShirt, no shirt found for Id: " + tShirt.getId());
+        }
     }
     // DELETE METHOD
     public void deleteTShirt(int id) {
-        tShirtRepository.deleteById(id);
+        Optional<TShirt> opt = tShirtRepository.findById(id);
+        if(opt.isPresent()){
+            tShirtRepository.deleteById(id);
+        }else {
+            throw new ProductNotFoundException("Cannot Delete TShirt, no shirt found for Id: " + id);
+        }
     }
 
 // ------------------------  GAMES SECTION   ----------------------//
 //    Games CRUD
     public Game saveGame(Game game) {
+
         return gameRepository.save(game);
     }
 
@@ -118,11 +141,22 @@ public class ServiceLayer {
     }
 
     public void updateGame(Game game) {
-        gameRepository.save(game);
+        Optional<Game> opt = gameRepository.findById(game.getId());
+        if(opt.isPresent()){
+            gameRepository.save(game);
+        }else {
+            throw new ProductNotFoundException("Cannot Update Game, no game found for Id: " + game.getId());
+        }
     }
 
     public void deleteGame(int id) {
-        gameRepository.deleteById(id);
+        Optional<Game> opt = gameRepository.findById(id);
+        if(opt.isPresent()){
+            gameRepository.deleteById(id);
+        }else {
+            throw new ProductNotFoundException("Cannot Delete Game, no game found for Id: " + id);
+        }
+
     }
 // ------------------------  INVOICE SECTION   ----------------------//
     @Transactional
@@ -134,7 +168,14 @@ public class ServiceLayer {
         Integer qtyRequested = invoice.getQuantity();
         switch(type){
             case "tshirt":
-                TShirt shirt = tShirtRepository.getById(itemId);
+                // Get the tshirt as an optional, in order to validate the ID of the tshirt or throw an error
+                Optional<TShirt> tshirt = tShirtRepository.findById(itemId);
+                TShirt shirt = new TShirt();
+                if(tshirt.isPresent()){
+                    shirt = tshirt.get();
+                }else{
+                    throw new ProductNotFoundException("T Shirt Not Found with ID: "+invoice.getItemId());
+                }
                 if(shirt.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + shirt.getQuantity() + " of that item in inventory.");
@@ -154,7 +195,14 @@ public class ServiceLayer {
                 System.out.println("Exit Swtich for Item Type with Invoice: "+invoice);
                 break;
             case "console":
-                Console console = consoleRepository.getById(itemId);
+                // Get the console as an optional, in order to validate the ID of the console or throw an error
+                Optional<Console> consoleOpt= consoleRepository.findById(itemId);
+                Console console = new Console();
+                if(consoleOpt.isPresent()){
+                    console = consoleOpt.get();
+                }else{
+                    throw new ProductNotFoundException("Console Not Found with ID: "+ invoice.getItemId());
+                }
                 if(console.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + console.getQuantity() + " of that item in inventory.");
@@ -171,7 +219,14 @@ public class ServiceLayer {
                 }
                 break;
             case "game":
-                Game game = gameRepository.getById(itemId);
+                // Get the game as an optional, in order to validate the ID of the game or throw an error
+                Optional<Game> gameOpt= gameRepository.findById(itemId);
+                Game game = new Game();
+                if(gameOpt.isPresent()){
+                    game = gameOpt.get();
+                }else{
+                    throw new ProductNotFoundException("Game Not Found with ID: "+ invoice.getItemId());
+                }
                 if(game.getQuantity() < qtyRequested){
                     // throw Error or response for invalid request, you cannot buy x QTY, we only have y
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + game.getQuantity() + " of that item in inventory.");
