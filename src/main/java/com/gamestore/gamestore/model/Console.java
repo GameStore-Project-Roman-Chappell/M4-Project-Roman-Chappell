@@ -19,7 +19,7 @@ public class Console {
 
     // FIELDS
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="console_id")
     private Integer id;
 
