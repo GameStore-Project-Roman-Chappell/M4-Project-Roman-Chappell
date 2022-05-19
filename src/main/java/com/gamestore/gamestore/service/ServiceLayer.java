@@ -185,8 +185,12 @@ public class ServiceLayer {
                     // Set Unit Price off of the item from the DB, not from the input received
                     invoice.setUnitPrice(shirt.getPrice());
                     // Get the Fee from the ProcessingFee for tshirt
-                    ProcessingFee fee = feeRepository.findByProductType("tshirt");
-                    invoice.setProcessingFee(fee.getFee());
+                    try {
+                        ProcessingFee fee = feeRepository.findByProductType("tshirt");
+                        invoice.setProcessingFee(fee.getFee());
+                    } catch (Exception e){
+                        throw new IllegalArgumentException("The fee for itemType 'tshirt' has not been set up. ");
+                    }
                     // Calculate the subtotal abd set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = shirt.getPrice().multiply(qty);
@@ -210,8 +214,12 @@ public class ServiceLayer {
                     // Set Unit Price off of the item from the DB, not from the input received
                     invoice.setUnitPrice(console.getPrice());
                     // Get the Fee from the ProcessingFee for console
-                    ProcessingFee fee = feeRepository.findByProductType("console");
-                    invoice.setProcessingFee(fee.getFee());
+                    try {
+                        ProcessingFee fee = feeRepository.findByProductType("console");
+                        invoice.setProcessingFee(fee.getFee());
+                    } catch (Exception e){
+                        throw new IllegalArgumentException("The fee for itemType 'console' has not been set up. ");
+                    }
                     // Calculate the subtotal abd set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = console.getPrice().multiply(qty);
@@ -234,8 +242,13 @@ public class ServiceLayer {
                     // Set Unit Price off of the item from the DB, not from the input received
                     invoice.setUnitPrice(game.getPrice());
                     // Get the Fee from the ProcessingFee for game
-                    ProcessingFee fee = feeRepository.findByProductType("game");
-                    invoice.setProcessingFee(fee.getFee());
+                    try{
+                        ProcessingFee fee = feeRepository.findByProductType("game");
+                        invoice.setProcessingFee(fee.getFee());
+                    } catch (Exception e){
+                        throw new IllegalArgumentException("The fee for itemType 'game' has not been set up. ");
+                    }
+
                     // Calculate the subtotal abd set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = game.getPrice().multiply(qty);
