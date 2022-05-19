@@ -25,12 +25,12 @@ public class GameRepositoryTest {
     GameRepository gameRepository;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         gameRepository.deleteAll();
     }
 
     @Test
-    public void addGetDeleteConsole() {
+    public void shouldAddAndDeleteGameFromRepository() {
 
         Game game = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal(29.95).setScale(2,BigDecimal.ROUND_HALF_DOWN), 5);
         game = gameRepository.save(game);
@@ -47,7 +47,7 @@ public class GameRepositoryTest {
     }
 
     @Test
-    public void getAllConsoles() {
+    public void shouldFindAllGamesAsListFromRepository() {
         Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
         game1 = gameRepository.save(game1);
 
@@ -60,7 +60,7 @@ public class GameRepositoryTest {
     }
 
     @Test
-    public void updateConsole() {
+    public void shouldUpdateGame() {
         Game game = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
         game = gameRepository.save(game);
 
@@ -73,18 +73,64 @@ public class GameRepositoryTest {
     }
 
     @Test
-    public void findConsoleByManufacturer() {
+    public void shouldReturnGamesByStudio() {
         Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
         gameRepository.save(game1);
 
         Game game2 = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
         gameRepository.save(game2);
 
-        Game game3 = new Game("Read Dead Redemption", "M", "Western Shooter RPG." , "Rockstar Games",new BigDecimal("49.95").setScale(2, RoundingMode.HALF_DOWN), 4);
+        Game game3 = new Game("Red Dead Redemption", "M", "Western Shooter RPG." , "Rockstar Games",new BigDecimal("49.95").setScale(2, RoundingMode.HALF_DOWN), 4);
         gameRepository.save(game3);
 
 
         List<Game> gameList = gameRepository.findByStudio("Rockstar Games");
         assertEquals(2, gameList.size());
+        assertEquals(gameList.get(0), game1);
+        assertEquals(gameList.get(1), game3);
+    }
+
+    @Test
+    public void shouldReturnGamesByESRB() {
+        Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        gameRepository.save(game1);
+
+        Game game2 = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
+        gameRepository.save(game2);
+
+        Game game3 = new Game("Red Dead Redemption", "M", "Western Shooter RPG." , "Rockstar Games",new BigDecimal("49.95").setScale(2, RoundingMode.HALF_DOWN), 4);
+        gameRepository.save(game3);
+
+
+        List<Game> gameList = gameRepository.findByEsrbRating("M");
+        assertEquals(2, gameList.size());
+        assertEquals(gameList.get(0), game2);
+        assertEquals(gameList.get(1), game3);
+    }
+
+    @Test
+    public void shouldReturnGamesByTitleLike() {
+        Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        gameRepository.save(game1);
+
+        Game game2 = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
+        gameRepository.save(game2);
+
+        Game game3 = new Game("Red Dead Redemption", "M", "Western Shooter RPG." , "Rockstar Games",new BigDecimal("49.95").setScale(2, RoundingMode.HALF_DOWN), 4);
+        gameRepository.save(game3);
+
+        Game game4 = new Game("GTA Vice City", "18+", "The next Grand Theft Auto series installment." , "Rockstar Games",new BigDecimal("19.95").setScale(2, RoundingMode.HALF_DOWN), 2);
+        gameRepository.save(game4);
+
+
+
+        List<Game> gameList = gameRepository.findByTitleLike("GTA");
+        assertEquals(2, gameList.size());
+        assertEquals(gameList.get(0), game1);
+        assertEquals(gameList.get(1), game4);
+
+        List<Game> gameList2 = gameRepository.findByTitleLike("Ring");
+        assertEquals(1, gameList2.size());
+        assertEquals(gameList2.get(0), game2);
     }
 }
