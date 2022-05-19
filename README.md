@@ -1,7 +1,7 @@
 # Game Store API Project
 
 ### Description
-This porject is an assignment as part of a java development bootcamp, and was built as an exercise in building a back end api based on a well-defined specification set.
+This project is an assignment as part of a java development bootcamp, and was built as an exercise in building a back end api based on a well-defined specification set.
 
 ### Authors
 <a href="https://github.com/adamchappell00" rel="nofollow">Adam Chappell</a>
@@ -14,6 +14,8 @@ Swagger OpenAPI Documentation is contained in the file:
 
 There are example properties which must be replaced in order to run the application contained in the file below. It must be renamed to application.properties:
  - example.properties
+
+Tests are set up with example.properties in a similar way but will use the 'game_store_test' database instead, to keep concerns separate.
 
 In order to match with the specification schema, we do not create or update the database through the application. We use a set of sql scripts to create the schema and insert given data into it before using the application. They are contained in the resources/static directory.
 
