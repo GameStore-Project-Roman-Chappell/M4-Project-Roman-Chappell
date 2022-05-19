@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.service;
 
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.model.Game;
 import com.gamestore.gamestore.model.TShirt;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,13 +44,14 @@ public class ServiceLayerTest {
         consoleRepo = mock(ConsoleRepository.class);
         Console xbox = new Console(1,"Xbox", "Microsoft", "1GB", "AMD", new BigDecimal(499.99), 50);
         Console xbox2 = new Console("Xbox", "Microsoft", "1GB", "AMD", new BigDecimal(499.99), 50);
-
         List<Console> consoleList = new ArrayList<>();
         consoleList.add(xbox);
 
         doReturn(xbox).when(consoleRepo).save(xbox2);
         doReturn(Optional.of(xbox)).when(consoleRepo).findById(1);
         doReturn(consoleList).when(consoleRepo).findAll();
+        Optional<Console> nullConsole = Optional.ofNullable(null);
+        doReturn(nullConsole).when(consoleRepo).findById(3752);
     }
 
     private void setUpGameRepositoryMock() {
@@ -62,6 +65,9 @@ public class ServiceLayerTest {
         doReturn(eldenRing).when(gameRepo).save(eldenRing2);
         doReturn(Optional.of(eldenRing)).when(gameRepo).findById(1);
         doReturn(gameList).when(gameRepo).findAll();
+
+        Optional<Game> nullGame = Optional.ofNullable(null);
+        doReturn(nullGame).when(gameRepo).findById(3752);
     }
 
     private void setUpTShirtRepositoryMock() {
@@ -75,6 +81,9 @@ public class ServiceLayerTest {
         doReturn(zeldaShirt).when(shirtRepo).save(zeldaShirt2);
         doReturn(Optional.of(zeldaShirt)).when(shirtRepo).findById(1);
         doReturn(shirtList).when(shirtRepo).findAll();
+
+        Optional<TShirt> nullShirt = Optional.ofNullable(null);
+        doReturn(nullShirt).when(shirtRepo).findById(3752);
     }
 
 //    CONSOLE CRUD tests
@@ -116,6 +125,19 @@ public class ServiceLayerTest {
         service.deleteConsole(1);
         verify(consoleRepo).deleteById(1);
     }
+//  Console Exception Tests
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenUpdatingConsoleWithInvalidId(){
+        Console badIdConsole = new Console(3752,"DerpBox", "Microsoft", "1GB", "AMD", new BigDecimal(5099.99), 50);
+        service.updateConsole(badIdConsole);
+        fail("We Failed the Test, Exception Not Thrown.");
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenDeletingConsoleWithInvalidId(){
+        service.deleteConsole(3752);
+        fail("We Failed the Test, Exception Not Thrown.");
+    }
 
 //    GAME CRUD tests
     @Test
@@ -155,6 +177,19 @@ public class ServiceLayerTest {
         service.deleteGame(1);
         verify(gameRepo).deleteById(1);
     }
+//  Game Exception Tests
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenUpdatingGameWithInvalidId(){
+        Game badIdGame = new Game(3752,"Smash and Boom", "M", "Do you even shoot?", "Rockstar Games", new BigDecimal(56099.99), 50);
+        service.updateGame(badIdGame);
+        fail("We Failed the Test, Exception Not Thrown.");
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenDeletingGameWithInvalidId(){
+        service.deleteGame(3752);
+        fail("We Failed the Test, Exception Not Thrown.");
+    }
 
 //    SHIRT CRUD Tests
     @Test
@@ -192,6 +227,22 @@ public class ServiceLayerTest {
         service.deleteTShirt(1);
         verify(shirtRepo).deleteById(1);
     }
+
+    //  Shirt Exception Tests
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenUpdatingShirtWithInvalidId(){
+        TShirt badIdTshirt = new TShirt("Large","Blue","Pretty Cool Shirt", new BigDecimal(56099.99), 50);
+        service.updateTShirt(badIdTshirt);
+        fail("We Failed the Test, Exception Not Thrown.");
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenDeletingShirtWithInvalidId(){
+        service.deleteTShirt(3752);
+        fail("We Failed the Test, Exception Not Thrown.");
+    }
+
+    // Invoice Method Tests
 
 
 }
