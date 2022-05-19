@@ -179,10 +179,10 @@ public class ConsolesControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-
+    @Test
     public void shouldReturnConsoleListWhenSearchingByManufacturer() throws Exception {
-        mockMvc.perform(get("/consoles?manufacturer=sony"))
+        mockMvc.perform(get("/consoles?manufacturer=Sony"))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(content().json(outputConsoleStringSearch));
     }
 }
