@@ -170,7 +170,7 @@ public class ServiceLayer {
             case "tshirt":
                 // Get the tshirt as an optional, in order to validate the ID of the tshirt or throw an error
                 Optional<TShirt> tshirt = tShirtRepository.findById(itemId);
-                TShirt shirt = new TShirt();
+                TShirt shirt;
                 if(tshirt.isPresent()){
                     shirt = tshirt.get();
                 }else{
@@ -191,17 +191,20 @@ public class ServiceLayer {
                     } catch (Exception e){
                         throw new IllegalArgumentException("The fee for itemType 'tshirt' has not been set up. ");
                     }
-                    // Calculate the subtotal abd set it to the invoice
+                    // Calculate the subtotal and set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = shirt.getPrice().multiply(qty);
                     invoice.setSubtotal(subtotal);
+                    // Remove the Qty Purchased from the TShirt
+                    shirt.removeQuantity(invoice.getQuantity());
+                    tShirtRepository.save(shirt);
                 }
                 System.out.println("Exit Swtich for Item Type with Invoice: "+invoice);
                 break;
             case "console":
                 // Get the console as an optional, in order to validate the ID of the console or throw an error
                 Optional<Console> consoleOpt= consoleRepository.findById(itemId);
-                Console console = new Console();
+                Console console;
                 if(consoleOpt.isPresent()){
                     console = consoleOpt.get();
                 }else{
@@ -220,16 +223,19 @@ public class ServiceLayer {
                     } catch (Exception e){
                         throw new IllegalArgumentException("The fee for itemType 'console' has not been set up. ");
                     }
-                    // Calculate the subtotal abd set it to the invoice
+                    // Calculate the subtotal and set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = console.getPrice().multiply(qty);
                     invoice.setSubtotal(subtotal);
+                    // Remove the Qty Purchased from the Console
+                    console.removeQuantity(invoice.getQuantity());
+                   consoleRepository.save(console);
                 }
                 break;
             case "game":
                 // Get the game as an optional, in order to validate the ID of the game or throw an error
                 Optional<Game> gameOpt= gameRepository.findById(itemId);
-                Game game = new Game();
+                Game game;
                 if(gameOpt.isPresent()){
                     game = gameOpt.get();
                 }else{
@@ -249,10 +255,13 @@ public class ServiceLayer {
                         throw new IllegalArgumentException("The fee for itemType 'game' has not been set up. ");
                     }
 
-                    // Calculate the subtotal abd set it to the invoice
+                    // Calculate the subtotal and set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = game.getPrice().multiply(qty);
                     invoice.setSubtotal(subtotal);
+                    // Remove the Qty Purchased from the Game
+                    game.removeQuantity(invoice.getQuantity());
+                   gameRepository.save(game);
                 }
                 break;
             default:
