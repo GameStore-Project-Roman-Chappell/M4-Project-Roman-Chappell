@@ -1,13 +1,12 @@
 package com.gamestore.gamestore.service;
 
 import com.gamestore.gamestore.exception.ProductNotFoundException;
-import com.gamestore.gamestore.model.Console;
-import com.gamestore.gamestore.model.Game;
-import com.gamestore.gamestore.model.TShirt;
+import com.gamestore.gamestore.model.*;
 import com.gamestore.gamestore.repository.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.text.TabableView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,8 @@ public class ServiceLayerTest {
         setUpConsoleRepositoryMock();
         setUpGameRepositoryMock();
         setUpTShirtRepositoryMock();
+        setUpTaxRateRepoMock();
+        setUpProcessingFeeRepoMock();
 
         service = new ServiceLayer(consoleRepo, shirtRepo, gameRepo, invoiceRepo, taxRepo, processRepo);
     }
@@ -84,6 +85,28 @@ public class ServiceLayerTest {
 
         Optional<TShirt> nullShirt = Optional.ofNullable(null);
         doReturn(nullShirt).when(shirtRepo).findById(3752);
+    }
+
+    public void setUpTaxRateRepoMock(){
+        taxRepo = mock(SalesTaxRateRepository.class);
+        SalesTaxRate taxRate1 = new SalesTaxRate("TX", new BigDecimal("0.04"));
+        Optional<SalesTaxRate> nullTax = Optional.ofNullable(null);
+
+        doReturn(taxRate1).when(taxRepo).findByState("TX");
+        doReturn(nullTax).when(taxRepo).findByState("ZZ");
+    }
+
+    public void setUpProcessingFeeRepoMock(){
+        processRepo = mock(ProcessingFeeRepository.class);
+        ProcessingFee shirtFee = new ProcessingFee("tshirt", new BigDecimal("1.98"));
+        ProcessingFee gameFee = new ProcessingFee("game", new BigDecimal("1.49"));
+        ProcessingFee consoleFee = new ProcessingFee("console", new BigDecimal("14.99"));
+        Optional<ProcessingFee> nullFee = Optional.ofNullable(null);
+
+        doReturn(shirtFee).when(processRepo).findByProductType("tshirt");
+        doReturn(gameFee).when(processRepo).findByProductType("game");
+        doReturn(consoleFee).when(processRepo).findByProductType("console");
+        doReturn(nullFee).when(processRepo).findByProductType("food");
     }
 
 //    CONSOLE CRUD tests
