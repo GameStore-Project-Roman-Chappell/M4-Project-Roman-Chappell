@@ -28,7 +28,7 @@ public class ConsoleRepositoryTest {
     }
 
     @Test
-    public void addGetDeleteConsole() {
+    public void shouldAddAndDeleteConsole() {
 
         Console console = new Console("Xbox", "Microsoft", "1TB", "AMD", new BigDecimal(499.99).setScale(2, BigDecimal.ROUND_FLOOR), 50);
 
@@ -46,7 +46,7 @@ public class ConsoleRepositoryTest {
     }
 
     @Test
-    public void getAllConsoles() {
+    public void shoulReturnAllConsoles() {
         Console console = new Console("Xbox", "Microsoft", "1TB", "AMD", new BigDecimal(499.99).setScale(2, BigDecimal.ROUND_FLOOR), 50);
 
         console = consoleRepo.save(console);
@@ -57,10 +57,11 @@ public class ConsoleRepositoryTest {
 
         List<Console> consoleList = consoleRepo.findAll();
         assertEquals(2, consoleList.size());
+        assertEquals(console, consoleList.get(0));
     }
 
     @Test
-    public void updateConsole() {
+    public void shouldUpdateConsole() {
         Console console = new Console("Xbox", "Microsoft", "1TB", "AMD", new BigDecimal(499.99).setScale(2, BigDecimal.ROUND_FLOOR), 50);
 
         console = consoleRepo.save(console);
@@ -71,10 +72,11 @@ public class ConsoleRepositoryTest {
 
         Optional<Console> console1 = consoleRepo.findById(console.getId());
         assertEquals(console, console1.get());
+        assertEquals("Xbox Series X", console1.get().getModel());
     }
 
     @Test
-    public void findConsoleByManufacturer() {
+    public void shouldFindConsolesByManufacturer() {
         Console console1 = new Console("Xbox", "Microsoft", "1TB", "AMD", new BigDecimal(499.99).setScale(2, BigDecimal.ROUND_FLOOR), 50);
         Console console2 = new Console("Xbox 360", "Microsoft", "1TB", "AMD", new BigDecimal(499.99).setScale(2, BigDecimal.ROUND_FLOOR), 50);
         Console console3 = new Console("PS5", "Sony", "1TB", "AMD", new BigDecimal(499.99).setScale(2, BigDecimal.ROUND_FLOOR), 50);
@@ -85,5 +87,7 @@ public class ConsoleRepositoryTest {
 
         List<Console> consoleList = consoleRepo.findByManufacturer("Microsoft");
         assertEquals(2, consoleList.size());
+        assertEquals(console1, consoleList.get(0));
+        assertEquals(console2, consoleList.get(1));
     }
 }
