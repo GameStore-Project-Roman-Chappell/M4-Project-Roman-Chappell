@@ -146,4 +146,9 @@ public class GamesControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    public void shouldReturnGameListWhenSearchingByStudio() throws Exception {
+
+    }
+
 }
