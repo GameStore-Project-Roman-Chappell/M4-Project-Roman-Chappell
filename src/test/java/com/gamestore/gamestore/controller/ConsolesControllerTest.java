@@ -2,6 +2,7 @@ package com.gamestore.gamestore.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.repository.ConsoleRepository;
 import com.gamestore.gamestore.service.ServiceLayer;
@@ -14,14 +15,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -46,11 +47,19 @@ public class ConsolesControllerTest {
 
     Console outputXbox;
 
+    Console outputConsoleSearch1;
+
+    Console outputConsoleSearch2;
+
     String inputConsoleString;
 
     String outputConsoleString;
 
+    String outputConsoleStringSearch;
+
     List<Console> allConsoles;
+
+    List<Console> outputSearchList;
 
     String allConsolesString;
 
@@ -61,16 +70,23 @@ public class ConsolesControllerTest {
     public void setUp() throws Exception {
         inputXbox = new Console(1,"Xbox", "Microsoft", "1TB", "AMD", new BigDecimal(499.99), 50);
         outputXbox = new Console(1,"Xbox", "Microsoft", "1TB", "AMD", new BigDecimal(499.99), 50);
+        outputConsoleSearch1 = new Console(2,"PS 5", "Sony", "648GB", "AMD", new BigDecimal(699.99), 40);
+        outputConsoleSearch2 = new Console(3,"PS 2", "Sony", "64 GB", "AMD", new BigDecimal(24.99), 4);
+
+
         inputConsoleString = mapper.writeValueAsString(inputXbox);
         outputConsoleString = mapper.writeValueAsString(outputXbox);
         allConsoles = Arrays.asList(outputXbox);
         allConsolesString = mapper.writeValueAsString(allConsoles);
+        outputSearchList = Arrays.asList(outputConsoleSearch1, outputConsoleSearch2);
+        outputConsoleStringSearch = mapper.writeValueAsString(outputSearchList);
 
 
         when(serviceLayer.saveConsole(inputXbox)).thenReturn(outputXbox);
         when(serviceLayer.findAllConsoles()).thenReturn(allConsoles);
         when(serviceLayer.findConsole(1)).thenReturn(outputXbox);
-
+        doThrow(new ProductNotFoundException("Bad")).when(serviceLayer).deleteConsole(139875);
+        when(serviceLayer.findAllConsolesByManufacturer("Sony")).thenReturn(outputSearchList);
 
 
     }
@@ -163,4 +179,10 @@ public class ConsolesControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+
+    public void shouldReturnConsoleListWhenSearchingByManufacturer() throws Exception {
+        mockMvc.perform(get("/consoles?manufacturer=sony"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 }
