@@ -1,7 +1,7 @@
 # Game Store API Project
 
 ### Description
-This porject is an assignment as part of a java development bootcamp, and was built as an exercise in building a back end api based on a well-defined specification set.
+This project is an assignment as part of a java development bootcamp, and was built as an exercise in building a back end api based on a well-defined specification set.
 
 ### Authors
 <a href="https://github.com/adamchappell00" rel="nofollow">Adam Chappell</a>
