@@ -1,10 +1,12 @@
 package com.gamestore.gamestore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gamestore.gamestore.exception.ProductNotFoundException;
 import com.gamestore.gamestore.model.Console;
 import com.gamestore.gamestore.model.TShirt;
 import com.gamestore.gamestore.repository.TShirtRepository;
 import com.gamestore.gamestore.service.ServiceLayer;
+import net.bytebuddy.build.ToStringPlugin;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,14 +46,20 @@ public class TShirtControllerTest {
     TShirt inputShirt;
 
     TShirt outputShirt;
+    TShirt searchShirt1;
+    TShirt searchShirt2;
 
     String inputShirtString;
 
     String outputShirtString;
+    String searchShirtString;
 
     List<TShirt> allShirts;
+    List<TShirt> searchShirts;
+    List<TShirt> sizeShirtsList;
 
     String allShirtsString;
+    String sizeShirtsListString;
 
     @Before
     public void setUp() throws Exception {
@@ -61,9 +70,21 @@ public class TShirtControllerTest {
         allShirts = Arrays.asList(outputShirt);
         allShirtsString = mapper.writeValueAsString(allShirts);
 
+        searchShirt1 = new TShirt(1,"Medium","Red","Zelda Shirt", new BigDecimal(7.99),25);
+        searchShirt2 = new TShirt(2, "Large", "Red", "Dragonball Shirt", new BigDecimal(7.99), 17);
+        searchShirts = Arrays.asList(searchShirt1, searchShirt2);
+        searchShirtString = mapper.writeValueAsString(searchShirts);
+        sizeShirtsList = Arrays.asList(searchShirt1);
+        sizeShirtsListString = mapper.writeValueAsString(sizeShirtsList);
+
+
         when(serviceLayer.saveTShirt(inputShirt)).thenReturn(outputShirt);
         when(serviceLayer.findAllTShirts()).thenReturn(allShirts);
         when(serviceLayer.findTShirtById(1)).thenReturn(outputShirt);
+        doThrow(new ProductNotFoundException("Bad")).when(serviceLayer).deleteTShirt(999);
+        when(serviceLayer.findTShirtsByColor("Red")).thenReturn(searchShirts);
+        when(serviceLayer.findTShirtsBySize("Medium")).thenReturn(sizeShirtsList);
+        when(serviceLayer.findTShirtsByColorAndSize("Red", "Medium")).thenReturn(sizeShirtsList);
     }
 
     @Test
@@ -140,8 +161,29 @@ public class TShirtControllerTest {
 
     @Test
     public void shouldReturn404WhenDeletingTShirtWithInvalidId() throws Exception {
-        mockMvc.perform(delete("/tshirts/139875"))
+        mockMvc.perform(delete("/tshirts/999"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnShirtListWhenSearchingByColor() throws Exception {
+        mockMvc.perform(get("/tshirts?color=Red"))
+                .andDo(print())
+                .andExpect(content().json(searchShirtString));
+    }
+
+    @Test
+    public void shouldReturnShirtListWhenSearchingBySize() throws Exception {
+        mockMvc.perform(get("/tshirts?size=Medium"))
+                .andDo(print())
+                .andExpect(content().json(sizeShirtsListString));
+    }
+
+    @Test
+    public void shouldReturnShirtListWhenSearchingBySizeAndColor() throws Exception {
+        mockMvc.perform(get("/tshirts?color=Red&size=Medium"))
+                .andDo(print())
+                .andExpect(content().json(sizeShirtsListString));
     }
 }

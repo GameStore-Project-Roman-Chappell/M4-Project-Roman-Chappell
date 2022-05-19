@@ -74,7 +74,6 @@ public class GamesControllerTest {
         outputGameSearch2 = new Game(2,"Dark Souls 3", "M", "Action Adventure", "FromSoftware", new BigDecimal(39.99), 50);
         outputSearchList = Arrays.asList(outputGameSearch1, outputGameSearch2);
         outputSearchString = mapper.writeValueAsString(outputSearchList);
-
         titleSearchList = Arrays.asList(outputGameSearch1);
         titleSearchListString = mapper.writeValueAsString(titleSearchList);
 
