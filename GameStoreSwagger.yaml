@@ -8,7 +8,7 @@ servers:
 paths:
   /tshirts/{id}:
     get:
-      description: Retrieves a specific tshirt based on the pathariable. If there is no tshirt for the id given, an error response is returned.
+      description: Retrieves a specific tshirt based on the id path variable. If there is no tshirt for the id given, an error response is returned.
       tags:
         - t-shirts-controller
       operationId: findTShirtById
@@ -86,7 +86,7 @@ paths:
                 errorCode: 422 UNPROCESSABLE_ENTITY
                 timestamp: '2022-05-12T17:57:34.614'
     delete:
-      description: Deletes a specific tshirt based on the pathariable. If successful, no content and status 204 is returned, if the id does not exist, a 404 status is returned.
+      description: Deletes a specific tshirt based on the id path variable. If successful, no content and status 204 is returned, if the id does not exist, a 404 status is returned.
       tags:
         - t-shirts-controller
       operationId: deleteTShirt
@@ -102,6 +102,7 @@ paths:
           description: No Content. Successful Request.
   /games/{id}:
     get:
+      description: Finds a specific game based on the id path variable. If there is no matching id in the database, an error response is returned.
       tags:
         - games-controller
       operationId: findGameById
@@ -119,7 +120,17 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Game'
+              example: 
+                id: 1
+                title: Elden Ring
+                esrbRating: M
+                description: Action-Adventure
+                studio: FromSoftware
+                price: 59.99
+                quantity: 100
+                       
     put:
+      description: Updates a specific game based on the id pathvariable and the requestbody. If the update requestbody object contains errors with validation or if the id in the pathvariable does not match the game in the requestbody, an error response is returned. There is no response body, only a status response. 
       tags:
         - games-controller
       operationId: updateGame
@@ -135,11 +146,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Game'
+            example:
+              id: 1
+              title: Elden Ring
+              esrbRating: M
+              description: Action-Adventure
+              studio: FromSoftware
+              price: 59.99
+              quantity: 100
         required: true
       responses:
         '200':
           description: OK
     delete:
+      description: Deletes a specific game based on the id path variable. If successful, no content and status 204 is returned, if the id does not exist, a 404 status is returned. 
       tags:
         - games-controller
       operationId: deleteGame
@@ -155,6 +175,7 @@ paths:
           description: No Content
   /consoles/{id}:
     get:
+      description: Retrieves a specific console bsaed on the id path variable. If there is no console for the id given, an error response is returned. 
       tags:
         - consoles-controller
       operationId: findConsoleById
@@ -172,7 +193,16 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Console'
+              example: 
+                id: 1
+                model: PS5
+                manufacturer: Sony
+                memoryAmount: 1TB
+                processor: AMD
+                price: 499.99
+                quantity: 50
     put:
+      description: Updates a specific console based on the id pathvariable and the requestbody. If the update requestbody object contains errors or if the id in the pathvariable does not match the console in the requestbody to update an error response is returned. There is no response body, only a status response.
       tags:
         - consoles-controller
       operationId: updateConsole
@@ -188,6 +218,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Console'
+            example:
+              id: 1
+              model: PS5
+              manufacturer: Sony
+              memoryAmount: 1TB
+              processor: AMD
+              price: 499.99
+              quantity: 50
         required: true
       responses:
         '200':
@@ -232,7 +270,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TShirt'
+                example:
+                - id: 1
+                  size: L
+                  color: Red
+                  description: Zelda Shirt
+                  price: 7.99
+                  quantity: 25
+                - id: 2
+                  size: S
+                  color: Black
+                  description: Pokemon Shirt
+                  price: 7.99
+                  quantity: 1
+                
     post:
+      description: Creates a tshirt based on the request body tshirt object. If variables in the request body do not meet the validation requirements then an error response is returned. 
       tags:
         - t-shirts-controller
       operationId: createTShirt
@@ -265,6 +318,7 @@ paths:
                 
   /purchase:
     post:
+      description: Creates an invoice based on the request body. Request body includes customer information and itemtype, and item id. The sales and tax information are then calculated and returned in an invoice object. 
       tags:
         - invoice-controller
       operationId: requestItemPurchase
@@ -273,6 +327,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Invoice'
+            example: 
+              name: Three
+              street: 123 Main
+              city: San Antonio
+              state: TX
+              zipcode: '12345'
+              itemType: tshirt
+              itemId: 1
+              quantity: 1
         required: true
       responses:
         '200':
@@ -281,6 +344,21 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Invoice'
+              example:
+                id: 11
+                name: Three
+                street: 123 Main
+                city: San Antonio
+                state: TX
+                zipcode: '12345'
+                itemType: tshirt
+                itemId: 1
+                unitPrice: 7.99
+                quantity: 1
+                subtotal: 7.99
+                tax: 0.24
+                processingFee: 1.98
+                total: 10.21
   
   /games:
     get:
@@ -313,7 +391,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Game'
+                example:
+                - id: 1
+                  title: Elden Ring
+                  esrbRating: M
+                  description: Action-Adventure
+                  studio: FromSoftware
+                  price: 59.99
+                  quantity: 100
+                - id: 2
+                  title: Pokemon Sword
+                  esrbRating: E
+                  description: RPG
+                  studio: Game Freak
+                  price: 59.99
+                  quantity: 150
+                - id: 3
+                  title: Horizon Forbidden West
+                  esrbRating: T
+                  description: Open World
+                  studio: Guerilla Games
+                  price: 39.99
+                  quantity: 45
+                
     post:
+      description: Creates a game based on the requestbody.
       tags:
         - games-controller
       operationId: createGame
@@ -322,6 +424,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Game'
+            example:
+              title: Pokemon Sword
+              esrbRating: E
+              description: RPG
+              studio: Game Freak
+              price: 59.99
+              quantity: 150
         required: true
       responses:
         '201':
@@ -332,6 +441,7 @@ paths:
                 $ref: '#/components/schemas/Game'
   /consoles:
     get:
+      description: Retrieves JSON list of every console in the database.
       tags:
         - consoles-controller
       operationId: getAllConsoles
@@ -350,7 +460,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Console'
+              example:
+              - id: 1
+                model: PS5
+                manufacturer: Sony
+                memoryAmount: 1TB
+                processor: AMD
+                price: 499.99
+                quantity: 50
+              - id: 2
+                model: Xbox One X
+                manufacturer: Microsoft
+                memoryAmount: 1TB
+                processor: AMD
+                price: 499.99
+                quantity: 75
+              - id: 3
+                model: Switch
+                manufacturer: Nintendo
+                memoryAmount: 32GB
+                processor: AMD
+                price: 299.99
+                quantity: 35
     post:
+      description: Creates a console based on the request body console object
       tags:
         - consoles-controller
       operationId: createConsole
@@ -359,6 +492,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Console'
+            example:
+              id: 1
+              model: PS5
+              manufacturer: Sony
+              memoryAmount: 1TB
+              processor: AMD
+              price: 499.99
+              quantity: 50
         required: true
       responses:
         '201':
@@ -400,6 +541,7 @@ components:
           type: integer
           format: int32
     Game:
+      description: Represents a single game SKU with a specific variation (esrb, title, studio, etc) and contains the inventory quantity. All fields are required.
       required:
         - description
         - esrbRating
@@ -434,6 +576,7 @@ components:
           type: integer
           format: int32
     Console:
+      description: Represents a single console SKU with a specific variation (model, manufacturer, etc) and contains the inventory quantity. All fields are required.
       required:
         - manufacturer
         - model
@@ -468,6 +611,7 @@ components:
           type: integer
           format: int32
     Invoice:
+      description: represents a single invoice with specific information (customer name, address, item type, item id, etc.). All fields are required.
       required:
         - city
         - itemId
