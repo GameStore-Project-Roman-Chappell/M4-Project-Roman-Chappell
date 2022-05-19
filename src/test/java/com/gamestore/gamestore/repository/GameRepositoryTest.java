@@ -57,6 +57,9 @@ public class GameRepositoryTest {
 
         List<Game> gameList = gameRepository.findAll();
         assertEquals(2, gameList.size());
+        assertEquals( game1, gameList.get(0));
+        assertEquals( game2, gameList.get(1));
+
     }
 
     @Test
@@ -69,7 +72,7 @@ public class GameRepositoryTest {
         gameRepository.save(game);
 
         Optional<Game> gameOpt = gameRepository.findById(game.getId());
-        assertEquals(gameOpt.get(),game);
+        assertEquals(game, gameOpt.get());
     }
 
     @Test
@@ -86,8 +89,8 @@ public class GameRepositoryTest {
 
         List<Game> gameList = gameRepository.findByStudio("Rockstar Games");
         assertEquals(2, gameList.size());
-        assertEquals(gameList.get(0), game1);
-        assertEquals(gameList.get(1), game3);
+        assertEquals( game1, gameList.get(0));
+        assertEquals( game3, gameList.get(1));
     }
 
     @Test
@@ -104,8 +107,8 @@ public class GameRepositoryTest {
 
         List<Game> gameList = gameRepository.findByEsrbRating("M");
         assertEquals(2, gameList.size());
-        assertEquals(gameList.get(0), game2);
-        assertEquals(gameList.get(1), game3);
+        assertEquals( game2, gameList.get(0));
+        assertEquals( game3, gameList.get(1));
     }
 
     @Test
@@ -126,11 +129,11 @@ public class GameRepositoryTest {
 
         List<Game> gameList = gameRepository.findByTitleLike("GTA");
         assertEquals(2, gameList.size());
-        assertEquals(gameList.get(0), game1);
-        assertEquals(gameList.get(1), game4);
+        assertEquals( game1, gameList.get(0));
+        assertEquals( game4, gameList.get(1));
 
         List<Game> gameList2 = gameRepository.findByTitleLike("Ring");
         assertEquals(1, gameList2.size());
-        assertEquals(gameList2.get(0), game2);
+        assertEquals( game2, gameList2.get(0));
     }
 }

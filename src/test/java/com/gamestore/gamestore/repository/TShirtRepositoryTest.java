@@ -1,5 +1,6 @@
 package com.gamestore.gamestore.repository;
 
+import com.gamestore.gamestore.model.TShirt;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,108 +28,121 @@ public class TShirtRepositoryTest {
         tshirtRepository.deleteAll();
     }
 
-/*    @Test
+    @Test
     public void shouldAddAndDeleteTShirtFromRepository() {
 
-        Game game = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal(29.95).setScale(2,BigDecimal.ROUND_HALF_DOWN), 5);
-        game = gameRepository.save(game);
+        TShirt shirt = new TShirt("Large", "Blue", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("9.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        tshirtRepository.save(shirt);
 
-        Optional<Game> gameOpt = gameRepository.findById(game.getId());
+        Optional<TShirt> shirtOpt = tshirtRepository.findById(shirt.getId());
 
-        assertEquals(gameOpt.get(), game);
+        assertEquals(shirtOpt.get(), shirt);
 
-        gameRepository.deleteById(game.getId());
+        tshirtRepository.deleteById(shirt.getId());
 
-        gameOpt = gameRepository.findById(game.getId());
+        shirtOpt = tshirtRepository.findById(shirt.getId());
 
-        assertFalse(gameOpt.isPresent());
+        assertFalse(shirtOpt.isPresent());
     }
 
     @Test
-    public void shouldFindAllGamesAsListFromRepository() {
-        Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
-        game1 = gameRepository.save(game1);
+    public void shouldFindAllShirtsAsListFromRepository() {
+        // Arrange
+        TShirt shirt1 = new TShirt("Large", "Blue", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("9.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        tshirtRepository.save(shirt1);
 
+        TShirt shirt2 = new TShirt("Medium", "Black", "Halo Shirt with Master Chief", new BigDecimal("5.95").setScale(2, RoundingMode.HALF_DOWN), 32);
+        tshirtRepository.save(shirt2);
+        // Act
+        List<TShirt> shirtList = tshirtRepository.findAll();
 
-        Game game2 = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
-        game2 = gameRepository.save(game2);
-
-        List<Game> gameList = gameRepository.findAll();
-        assertEquals(2, gameList.size());
+        // Assert
+        assertEquals(2, shirtList.size());
+        assertEquals(shirt1, shirtList.get(0));
+        assertEquals(shirt2, shirtList.get(1));
     }
 
     @Test
-    public void shouldUpdateGame() {
-        Game game = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
-        game = gameRepository.save(game);
+    public void shouldUpdateShirtOnSave() {
+        TShirt shirt1 = new TShirt("Large", "Blue", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("9.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        tshirtRepository.save(shirt1);
 
-        game.setEsrbRating("18+");
-        game.setQuantity(53);
-        gameRepository.save(game);
+        shirt1.setColor("Red");
+        shirt1.setQuantity(53);
+        tshirtRepository.save(shirt1);
 
-        Optional<Game> gameOpt = gameRepository.findById(game.getId());
-        assertEquals(gameOpt.get(),game);
+        Optional<TShirt> shirtOpt = tshirtRepository.findById(shirt1.getId());
+        assertEquals(shirt1,shirtOpt.get());
+        assertEquals( "Red", shirtOpt.get().getColor());
+        assertEquals(53, shirtOpt.get().getQuantity());
     }
 
     @Test
-    public void shouldReturnGamesByStudio() {
-        Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
-        gameRepository.save(game1);
+    public void shouldReturnShirtsBySize() {
+        TShirt shirt1 = new TShirt("Large", "Blue", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("9.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        tshirtRepository.save(shirt1);
+        TShirt shirt2 = new TShirt("Large", "Blue", "Halo Shirt with Master Chief", new BigDecimal("5.95").setScale(2, RoundingMode.HALF_DOWN), 21);
+        tshirtRepository.save(shirt2);
+        TShirt shirt3 = new TShirt("Extra Large", "Red", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("6.95").setScale(2, RoundingMode.HALF_DOWN), 3);
+        tshirtRepository.save(shirt3);
+        TShirt shirt4 = new TShirt("Medium", "Black", "Halo Shirt with Master Chief", new BigDecimal("5.95").setScale(2, RoundingMode.HALF_DOWN), 14);
+        tshirtRepository.save(shirt4);
 
-        Game game2 = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
-        gameRepository.save(game2);
 
-        Game game3 = new Game("Red Dead Redemption", "M", "Western Shooter RPG." , "Rockstar Games",new BigDecimal("49.95").setScale(2, RoundingMode.HALF_DOWN), 4);
-        gameRepository.save(game3);
-
-
-        List<Game> gameList = gameRepository.findByStudio("Rockstar Games");
-        assertEquals(2, gameList.size());
-        assertEquals(gameList.get(0), game1);
-        assertEquals(gameList.get(1), game3);
+        List<TShirt> shirtList1 = tshirtRepository.findAllBySize("Large");
+        List<TShirt> shirtList2 = tshirtRepository.findAllBySize("Medium");
+        assertEquals(2, shirtList1.size());
+        assertEquals(shirtList1.get(0), shirt1);
+        assertEquals(shirtList1.get(1), shirt2);
+        assertEquals(1, shirtList2.size());
+        assertEquals(shirtList2.get(0), shirt4);
     }
 
     @Test
-    public void shouldReturnGamesByESRB() {
-        Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
-        gameRepository.save(game1);
+    public void shouldReturnShirtsByColor() {
+        // Arrange
+        TShirt shirt1 = new TShirt("Large", "Blue", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("9.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        tshirtRepository.save(shirt1);
+        TShirt shirt2 = new TShirt("Large", "Black", "Halo Shirt with Master Chief", new BigDecimal("5.95").setScale(2, RoundingMode.HALF_DOWN), 21);
+        tshirtRepository.save(shirt2);
+        TShirt shirt3 = new TShirt("Extra Large", "Red", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("6.95").setScale(2, RoundingMode.HALF_DOWN), 3);
+        tshirtRepository.save(shirt3);
+        TShirt shirt4 = new TShirt("Medium", "Black", "Halo Shirt with Master Chief", new BigDecimal("5.95").setScale(2, RoundingMode.HALF_DOWN), 14);
+        tshirtRepository.save(shirt4);
 
-        Game game2 = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
-        gameRepository.save(game2);
-
-        Game game3 = new Game("Red Dead Redemption", "M", "Western Shooter RPG." , "Rockstar Games",new BigDecimal("49.95").setScale(2, RoundingMode.HALF_DOWN), 4);
-        gameRepository.save(game3);
-
-
-        List<Game> gameList = gameRepository.findByEsrbRating("M");
-        assertEquals(2, gameList.size());
-        assertEquals(gameList.get(0), game2);
-        assertEquals(gameList.get(1), game3);
+        // Act
+        List<TShirt> shirtList1 = tshirtRepository.findAllByColor("Black");
+        List<TShirt> shirtList2 = tshirtRepository.findAllByColor("Red");
+        // Assert
+        assertEquals(2, shirtList1.size());
+        assertEquals(shirtList1.get(0), shirt2);
+        assertEquals(shirtList1.get(1), shirt4);
+        assertEquals(1, shirtList2.size());
+        assertEquals(shirtList2.get(0), shirt3);
     }
 
     @Test
-    public void shouldReturnGamesByTitleLike() {
-        Game game1 = new Game("GTA V", "18+", "Grand Theft Auto V is an action-adventure game. Players complete missions to progress through the story. Outside of the missions, players may freely roam the open world." , "Rockstar Games",new BigDecimal("29.95").setScale(2, RoundingMode.HALF_DOWN), 5);
-        gameRepository.save(game1);
+    public void shouldReturnTShirtsByColorAndSize() {
+        // Arrange
+        TShirt shirt1 = new TShirt("Large", "Black", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("9.95").setScale(2, RoundingMode.HALF_DOWN), 5);
+        tshirtRepository.save(shirt1);
+        TShirt shirt2 = new TShirt("Large", "Black", "Halo Shirt with Master Chief", new BigDecimal("5.95").setScale(2, RoundingMode.HALF_DOWN), 21);
+        tshirtRepository.save(shirt2);
+        TShirt shirt3 = new TShirt("Extra Large", "Red", "Legend of Zelda Shirt with the Triforce Symbol", new BigDecimal("6.95").setScale(2, RoundingMode.HALF_DOWN), 3);
+        tshirtRepository.save(shirt3);
+        TShirt shirt4 = new TShirt("Medium", "Black", "Halo Shirt with Master Chief", new BigDecimal("5.95").setScale(2, RoundingMode.HALF_DOWN), 14);
+        tshirtRepository.save(shirt4);
 
-        Game game2 = new Game("Elden Ring", "M", "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." , "Bandai Namco",new BigDecimal("58.99").setScale(2, RoundingMode.HALF_DOWN), 12);
-        gameRepository.save(game2);
-
-        Game game3 = new Game("Red Dead Redemption", "M", "Western Shooter RPG." , "Rockstar Games",new BigDecimal("49.95").setScale(2, RoundingMode.HALF_DOWN), 4);
-        gameRepository.save(game3);
-
-        Game game4 = new Game("GTA Vice City", "18+", "The next Grand Theft Auto series installment." , "Rockstar Games",new BigDecimal("19.95").setScale(2, RoundingMode.HALF_DOWN), 2);
-        gameRepository.save(game4);
-
-
-
-        List<Game> gameList = gameRepository.findByTitleLike("GTA");
-        assertEquals(2, gameList.size());
-        assertEquals(gameList.get(0), game1);
-        assertEquals(gameList.get(1), game4);
-
-        List<Game> gameList2 = gameRepository.findByTitleLike("Ring");
-        assertEquals(1, gameList2.size());
-        assertEquals(gameList2.get(0), game2);
-    }*/
+        // Act
+        List<TShirt> shirtList1 = tshirtRepository.findAllByColorAndSize("Black", "Large");
+        List<TShirt> shirtList2 = tshirtRepository.findAllByColorAndSize("Red", "Medium");
+        List<TShirt> shirtList3 = tshirtRepository.findAllByColorAndSize("Red", "Extra Large");
+        // Assert
+        assertEquals(2, shirtList1.size());
+        assertEquals(shirtList1.get(0), shirt1);
+        assertEquals(shirtList1.get(1), shirt2);
+        assertEquals(0, shirtList2.size());
+        assertEquals(1, shirtList3.size());
+        assertEquals(shirtList3.get(0), shirt3);
+    }
 }

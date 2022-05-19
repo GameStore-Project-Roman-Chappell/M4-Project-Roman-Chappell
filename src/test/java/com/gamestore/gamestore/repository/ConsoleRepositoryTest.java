@@ -70,7 +70,7 @@ public class ConsoleRepositoryTest {
         consoleRepo.save(console);
 
         Optional<Console> console1 = consoleRepo.findById(console.getId());
-        assertEquals(console1.get(), console);
+        assertEquals(console, console1.get());
     }
 
     @Test
