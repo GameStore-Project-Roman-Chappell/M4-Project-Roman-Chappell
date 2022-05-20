@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -183,18 +184,18 @@ public class ServiceLayer {
                 }else{
                     System.out.println("T Shirt item Type found for Invoice");
                     // Set Unit Price off of the item from the DB, not from the input received
-                    invoice.setUnitPrice(shirt.getPrice());
+                    invoice.setUnitPrice(shirt.getPrice().setScale(2, RoundingMode.HALF_DOWN));
                     // Get the Fee from the ProcessingFee for tshirt
                     try {
                         ProcessingFee fee = feeRepository.findByProductType("tshirt");
-                        invoice.setProcessingFee(fee.getFee());
+                        invoice.setProcessingFee(fee.getFee().setScale(2, RoundingMode.HALF_DOWN));
                     } catch (Exception e){
                         throw new IllegalArgumentException("The fee for itemType 'tshirt' has not been set up. ");
                     }
                     // Calculate the subtotal and set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = shirt.getPrice().multiply(qty);
-                    invoice.setSubtotal(subtotal);
+                    invoice.setSubtotal(subtotal.setScale(2, RoundingMode.HALF_DOWN));
                     // Remove the Qty Purchased from the TShirt
                     shirt.removeQuantity(invoice.getQuantity());
                     tShirtRepository.save(shirt);
@@ -215,18 +216,18 @@ public class ServiceLayer {
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + console.getQuantity() + " of that item in inventory.");
                 }else{
                     // Set Unit Price off of the item from the DB, not from the input received
-                    invoice.setUnitPrice(console.getPrice());
+                    invoice.setUnitPrice(console.getPrice().setScale(2, RoundingMode.HALF_DOWN));
                     // Get the Fee from the ProcessingFee for console
                     try {
                         ProcessingFee fee = feeRepository.findByProductType("console");
-                        invoice.setProcessingFee(fee.getFee());
+                        invoice.setProcessingFee(fee.getFee().setScale(2, RoundingMode.HALF_DOWN));
                     } catch (Exception e){
                         throw new IllegalArgumentException("The fee for itemType 'console' has not been set up. ");
                     }
                     // Calculate the subtotal and set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = console.getPrice().multiply(qty);
-                    invoice.setSubtotal(subtotal);
+                    invoice.setSubtotal(subtotal.setScale(2, RoundingMode.HALF_DOWN));
                     // Remove the Qty Purchased from the Console
                     console.removeQuantity(invoice.getQuantity());
                    consoleRepository.save(console);
@@ -246,11 +247,11 @@ public class ServiceLayer {
                     throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + game.getQuantity() + " of that item in inventory.");
                 }else{
                     // Set Unit Price off of the item from the DB, not from the input received
-                    invoice.setUnitPrice(game.getPrice());
+                    invoice.setUnitPrice(game.getPrice().setScale(2, RoundingMode.HALF_DOWN));
                     // Get the Fee from the ProcessingFee for game
                     try{
                         ProcessingFee fee = feeRepository.findByProductType("game");
-                        invoice.setProcessingFee(fee.getFee());
+                        invoice.setProcessingFee(fee.getFee().setScale(2, RoundingMode.HALF_DOWN));
                     } catch (Exception e){
                         throw new IllegalArgumentException("The fee for itemType 'game' has not been set up. ");
                     }
@@ -258,7 +259,7 @@ public class ServiceLayer {
                     // Calculate the subtotal and set it to the invoice
                     BigDecimal qty = new BigDecimal(qtyRequested);
                     BigDecimal subtotal = game.getPrice().multiply(qty);
-                    invoice.setSubtotal(subtotal);
+                    invoice.setSubtotal(subtotal.setScale(2, RoundingMode.HALF_DOWN));
                     // Remove the Qty Purchased from the Game
                     game.removeQuantity(invoice.getQuantity());
                    gameRepository.save(game);
@@ -270,9 +271,9 @@ public class ServiceLayer {
         // Add Extra Processing fee for Large Order
         System.out.println("Checking for large order processing fee.");
         if(invoice.getQuantity() >= 10){
-            BigDecimal additionalFee = new BigDecimal(15.49);
+            BigDecimal additionalFee = new BigDecimal("15.49").setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal processingFee = invoice.getProcessingFee().add(additionalFee);
-            invoice.setProcessingFee(processingFee);
+            invoice.setProcessingFee(processingFee.setScale(2, RoundingMode.HALF_DOWN));
         }
 
         // Get the tax rate based on the order state and perform the calculation based on the subtotal
@@ -281,20 +282,20 @@ public class ServiceLayer {
             BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
             BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal()).setScale(2, BigDecimal.ROUND_CEILING);
             System.out.println("Tax Amount: "+taxValue);
-            invoice.setTax(taxValue);
+            invoice.setTax(taxValue.setScale(2, RoundingMode.HALF_DOWN));
         }catch (Exception e){
             throw new IllegalArgumentException("No tax rate found for "+ invoice.getState() + ". State must be a valid state abbreviation.");
         }
 
         // Add the total
         BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getSubtotal());
-        invoice.setTotal(total);
+        invoice.setTotal(total.setScale(2, RoundingMode.HALF_DOWN));
 
-        // Save, build view Model, and Return the Invoice
+        // Save and Return the Invoice
         System.out.println("Saving Invoice Built" + invoice);
-        invoiceRepository.save(invoice);
-        System.out.println("Invoice Saved: " + invoice);
-        return invoice;
+        Invoice created = invoiceRepository.save(invoice);
+        System.out.println("Invoice Saved: " + created);
+        return created;
     }
 
 

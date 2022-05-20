@@ -5,12 +5,14 @@ import com.gamestore.gamestore.exception.UnprocessableRequestException;
 import com.gamestore.gamestore.model.*;
 import com.gamestore.gamestore.repository.*;
 import com.gamestore.gamestore.viewmodel.InvoiceViewModel;
+import org.assertj.core.util.VisibleForTesting;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.text.TabableView;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,12 +40,12 @@ public class ServiceLayerTest {
     Invoice largeQtyInvoiceInput = new Invoice( "Steve Rogers","123 America", "New York", "NY", "12345", "game", 1, 12 );
 
 
-    Invoice shirtInvoice1 = new Invoice(  "Mr Potato Head","123 Main", "San Antonio", "TX", "12345", "tshirt", 1, new BigDecimal("7.99"), 2, new BigDecimal("15.98"), new BigDecimal("0.64"), new BigDecimal("1.98"),new BigDecimal("18.60") );
+    Invoice shirtInvoice1 = new Invoice(  "Mr Potato Head","123 Main", "San Antonio", "TX", "12345", "tshirt", 1, new BigDecimal("7.99"), 2, new BigDecimal("15.98"), new BigDecimal("0.48"), new BigDecimal("1.98"),new BigDecimal("18.44") );
     Invoice consoleInvoice1 = new Invoice("Dr No","123 Evil", "Chicago", "IL", "12345", "console", 1, new BigDecimal("499.99"), 1, new BigDecimal("499.99"), new BigDecimal("25.00"), new BigDecimal("14.99"),new BigDecimal("539.98"));
     Invoice gameInvoice1 = new Invoice( "Steve Rogers","123 America", "New York", "NY", "12345", "game", 1, new BigDecimal("59.99"), 3, new BigDecimal("179.97"), new BigDecimal("10.80"), new BigDecimal("1.49"), new BigDecimal("192.26"));
     Invoice largeQtyInvoice1 = new Invoice( "Steve Rogers","123 America", "New York", "NY", "12345", "game", 1, new BigDecimal("59.99"), 12, new BigDecimal("719.88"), new BigDecimal("43.20"), new BigDecimal("16.98"), new BigDecimal("780.06"));
 
-    Invoice shirtReturnInvoice1 = new Invoice( 1, "Mr Potato Head","123 Main", "San Antonio", "TX", "12345", "tshirt", 1, new BigDecimal("7.99"), 2, new BigDecimal("15.98"), new BigDecimal("0.64"), new BigDecimal("1.98"),new BigDecimal("18.60") );
+    Invoice shirtReturnInvoice1 = new Invoice( 1, "Mr Potato Head","123 Main", "San Antonio", "TX", "12345", "tshirt", 1, new BigDecimal("7.99"), 2, new BigDecimal("15.98"), new BigDecimal("0.48"), new BigDecimal("1.98"),new BigDecimal("18.44") );
     Invoice consoleReturnInvoice1 = new Invoice(2, "Dr No","123 Evil", "Chicago", "IL", "12345", "console", 1, new BigDecimal("499.99"), 1, new BigDecimal("499.99"), new BigDecimal("25.00"), new BigDecimal("14.99"),new BigDecimal("539.98"));
     Invoice gameReturnInvoice1 = new Invoice(3, "Steve Rogers","123 America", "New York", "NY", "12345", "game", 1, new BigDecimal("59.99"), 3, new BigDecimal("179.97"), new BigDecimal("10.80"), new BigDecimal("1.49"), new BigDecimal("192.26"));
     Invoice largeQtyReturnInvoice1 = new Invoice(4, "Steve Rogers","123 America", "New York", "NY", "12345", "game", 1, new BigDecimal("59.99"), 12, new BigDecimal("719.88"), new BigDecimal("43.20"), new BigDecimal("16.98"), new BigDecimal("780.06"));
@@ -137,13 +139,10 @@ public class ServiceLayerTest {
     public void setUpInvoiceRepositoryMock(){
         invoiceRepository = mock(InvoiceRepository.class);
 
-
         doReturn(shirtReturnInvoice1).when(invoiceRepository).save(shirtInvoice1);
         doReturn(consoleReturnInvoice1).when(invoiceRepository).save(consoleInvoice1);
         doReturn(gameReturnInvoice1).when(invoiceRepository).save(gameInvoice1);
         doReturn(largeQtyReturnInvoice1).when(invoiceRepository).save(largeQtyInvoice1);
-
-
     }
 
 //    CONSOLE CRUD tests
@@ -202,8 +201,8 @@ public class ServiceLayerTest {
 //    GAME CRUD tests
     @Test
     public void shouldSaveGame() {
-        Game gameToSave = new Game("Elden Ring", "M", "Action-Adventure", "FromSoftware", new BigDecimal(59.99), 50);
-        Game expectedGame = new Game(1,"Elden Ring", "M", "Action-Adventure", "FromSoftware", new BigDecimal(59.99), 50);
+        Game gameToSave = new Game("Elden Ring", "M", "Action-Adventure", "FromSoftware", new BigDecimal("59.99").setScale(2, RoundingMode.HALF_DOWN), 50);
+        Game expectedGame = new Game(1,"Elden Ring", "M", "Action-Adventure", "FromSoftware", new BigDecimal("59.99").setScale(2, RoundingMode.HALF_DOWN), 50);
 
         Game actualResult = service.saveGame(gameToSave);
         assertEquals(expectedGame, actualResult);
@@ -218,7 +217,7 @@ public class ServiceLayerTest {
 
     @Test
     public void shouldFindGameById() {
-        Game expectedResult = new Game(1,"Elden Ring", "M", "Action-Adventure", "FromSoftware", new BigDecimal(59.99), 50);
+        Game expectedResult = new Game(1,"Elden Ring", "M", "Action-Adventure", "FromSoftware", new BigDecimal("59.99").setScale(2, RoundingMode.HALF_DOWN), 50);
         Game actualResult = service.findGame(1);
 
         assertEquals(expectedResult, actualResult);
@@ -334,7 +333,7 @@ public class ServiceLayerTest {
         fail("We Failed the Test, Exception Not Thrown.");
     }
     @Test
-    public void shouldAddLargeOrderProcessingFeeForQtyOverTen(){
+    public void shouldAddLargeOrderProcessingFeeForInvoiceQtyOverTen(){
         Invoice testResult1 = service.createInvoiceAndReturn(largeQtyInvoiceInput);
         Double normalFee = 1.49;
         Double largeFee = 15.49;
@@ -342,7 +341,7 @@ public class ServiceLayerTest {
     }
 
     @Test(expected = UnprocessableRequestException.class)
-    public void shouldRespondWith422IfQuantityRequestedIsGreaterThanInventory(){
+    public void shouldRespondWith422IfInvoiceQuantityRequestedIsGreaterThanInventory(){
         Invoice exceptionInput = largeQtyInvoiceInput;
         exceptionInput.setQuantity(65);
         service.createInvoiceAndReturn(exceptionInput);
@@ -350,156 +349,52 @@ public class ServiceLayerTest {
     }
 
     @Test(expected = ProductNotFoundException.class)
-    public void  shouldRespondWithNotFoundIfItemIdNotExistsForItemType(){
+    public void  shouldRespondWithNotFoundIfInvoiceItemIdNotExistsForItemType(){
         Invoice exceptionInput = shirtInvoiceInput;
         exceptionInput.setItemId(3752);
         service.createInvoiceAndReturn(exceptionInput);
+        fail("We Failed the Test, Exception Not Thrown.");
     }
 
     @Test
-    public void shouldSetUnitPriceByProductPriceNotByRequestBodyUnitPrice(){
+    public void shouldSetInvoiceUnitPriceByProductPriceNotByRequestBodyUnitPrice(){
         Invoice testUnitPriceInput = shirtInvoiceInput;
         testUnitPriceInput.setUnitPrice(new BigDecimal("49.99"));
         Invoice outputInvoice = service.createInvoiceAndReturn(testUnitPriceInput);
         assertEquals(new BigDecimal("7.99"), outputInvoice.getUnitPrice().setScale(2,BigDecimal.ROUND_HALF_DOWN));
     }
-    /*
-    @Transactional
-    public Invoice createInvoiceAndReturn(Invoice invoice){
-        System.out.println("Begin createInvoiceReturnViewModel with:" + invoice);
-                                                                // Add the fee based on the item type, and check the Quantity of the Item Id Available before Transaction
-                                                                String type = invoice.getItemType();
-                                                                Integer itemId = invoice.getItemId();
-                                                                Integer qtyRequested = invoice.getQuantity();
-                                                                switch(type){
-                                                                    case "tshirt":
-                                                                        // Get the tshirt as an optional, in order to validate the ID of the tshirt or throw an error
-                                                                        Optional<TShirt> tshirt = tShirtRepository.findById(itemId);
-                                                                        TShirt shirt;
-                                                                        if(tshirt.isPresent()){
-                                                                            shirt = tshirt.get();
-                                                                        }else{
-                                                                            throw new ProductNotFoundException("T Shirt Not Found with ID: "+invoice.getItemId());
-                                                                        }
-                                                                            if(shirt.getQuantity() < qtyRequested){
-                                                                                // throw Error or response for invalid request, you cannot buy x QTY, we only have y
-                                                                                throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + shirt.getQuantity() + " of that item in inventory.");
 
-                                                                            }else{
-                                                                            System.out.println("T Shirt item Type found for Invoice");
-                                                                            // Set Unit Price off of the item from the DB, not from the input received
-                                                                            invoice.setUnitPrice(shirt.getPrice());
-                                                                            // Get the Fee from the ProcessingFee for tshirt
-                                                                            try {
-                                                                                ProcessingFee fee = feeRepository.findByProductType("tshirt");
-                                                                                invoice.setProcessingFee(fee.getFee());
-                                                                            } catch (Exception e){
-                                                                                throw new IllegalArgumentException("The fee for itemType 'tshirt' has not been set up. ");
-                                                                            }
-                    // Calculate the subtotal and set it to the invoice
-                    BigDecimal qty = new BigDecimal(qtyRequested);
-                    BigDecimal subtotal = shirt.getPrice().multiply(qty);
-                    invoice.setSubtotal(subtotal);
-                    // Remove the Qty Purchased from the TShirt
-                    shirt.removeQuantity(invoice.getQuantity());
-                    tShirtRepository.save(shirt);
-                }
-                System.out.println("Exit Swtich for Item Type with Invoice: "+invoice);
-                break;
-            case "console":
-                // Get the console as an optional, in order to validate the ID of the console or throw an error
-                Optional<Console> consoleOpt= consoleRepository.findById(itemId);
-                Console console;
-                if(consoleOpt.isPresent()){
-                    console = consoleOpt.get();
-                }else{
-                    throw new ProductNotFoundException("Console Not Found with ID: "+ invoice.getItemId());
-                }
-                if(console.getQuantity() < qtyRequested){
-                    // throw Error or response for invalid request, you cannot buy x QTY, we only have y
-                    throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + console.getQuantity() + " of that item in inventory.");
-                }else{
-                    // Set Unit Price off of the item from the DB, not from the input received
-                    invoice.setUnitPrice(console.getPrice());
-                    // Get the Fee from the ProcessingFee for console
-                    try {
-                        ProcessingFee fee = feeRepository.findByProductType("console");
-                        invoice.setProcessingFee(fee.getFee());
-                    } catch (Exception e){
-                        throw new IllegalArgumentException("The fee for itemType 'console' has not been set up. ");
-                    }
-                    // Calculate the subtotal and set it to the invoice
-                    BigDecimal qty = new BigDecimal(qtyRequested);
-                    BigDecimal subtotal = console.getPrice().multiply(qty);
-                    invoice.setSubtotal(subtotal);
-                    // Remove the Qty Purchased from the Console
-                    console.removeQuantity(invoice.getQuantity());
-                    consoleRepository.save(console);
-                }
-                break;
-            case "game":
-                // Get the game as an optional, in order to validate the ID of the game or throw an error
-                Optional<Game> gameOpt= gameRepository.findById(itemId);
-                Game game;
-                if(gameOpt.isPresent()){
-                    game = gameOpt.get();
-                }else{
-                    throw new ProductNotFoundException("Game Not Found with ID: "+ invoice.getItemId());
-                }
-                if(game.getQuantity() < qtyRequested){
-                    // throw Error or response for invalid request, you cannot buy x QTY, we only have y
-                    throw new UnprocessableRequestException("Request cannot be processed, you requested a purchase of "+ qtyRequested+ ", but we only have " + game.getQuantity() + " of that item in inventory.");
-                }else{
-                    // Set Unit Price off of the item from the DB, not from the input received
-                    invoice.setUnitPrice(game.getPrice());
-                    // Get the Fee from the ProcessingFee for game
-                    try{
-                        ProcessingFee fee = feeRepository.findByProductType("game");
-                        invoice.setProcessingFee(fee.getFee());
-                    } catch (Exception e){
-                        throw new IllegalArgumentException("The fee for itemType 'game' has not been set up. ");
-                    }
+    @Test
+    public void shouldCalculateInvoiceTaxAndSetTaxAmountFromTaxRate(){
 
-                    // Calculate the subtotal and set it to the invoice
-                    BigDecimal qty = new BigDecimal(qtyRequested);
-                    BigDecimal subtotal = game.getPrice().multiply(qty);
-                    invoice.setSubtotal(subtotal);
-                    // Remove the Qty Purchased from the Game
-                    game.removeQuantity(invoice.getQuantity());
-                    gameRepository.save(game);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("No item type of " + invoice.getItemType() + " was found. Please use item type of: tshirt, console, or game.");
-        }
-        // Add Extra Processing fee for Large Order
-        System.out.println("Checking for large order processing fee.");
-        if(invoice.getQuantity() >= 10){
-            BigDecimal additionalFee = new BigDecimal(15.49);
-            BigDecimal processingFee = invoice.getProcessingFee().add(additionalFee);
-            invoice.setProcessingFee(processingFee);
-        }
+        Invoice shirtReturn = service.createInvoiceAndReturn(shirtInvoiceInput);
+        Invoice consoleReturn = service.createInvoiceAndReturn(consoleInvoiceInput);
+        Invoice gameReturn = service.createInvoiceAndReturn(gameInvoiceInput);
 
-        // Get the tax rate based on the order state and perform the calculation based on the subtotal
-        System.out.println("Finding tax rate.");
-        try {
-            BigDecimal taxRate = taxRateRepository.findByState(invoice.getState()).getRate();
-            BigDecimal taxValue = taxRate.multiply(invoice.getSubtotal()).setScale(2, BigDecimal.ROUND_CEILING);
-            System.out.println("Tax Amount: "+taxValue);
-            invoice.setTax(taxValue);
-        }catch (Exception e){
-            throw new IllegalArgumentException("No tax rate found for "+ invoice.getState() + ". State must be a valid state abbreviation.");
-        }
-
-        // Add the total
-        BigDecimal total = invoice.getTax().add(invoice.getProcessingFee()).add(invoice.getSubtotal());
-        invoice.setTotal(total);
-
-        // Save, build view Model, and Return the Invoice
-        System.out.println("Saving Invoice Built" + invoice);
-        invoiceRepository.save(invoice);
-        Optional<Invoice> createdInvoice = invoiceRepository.findById(invoice.getId());
-        return createdInvoice.get();
+        assertEquals(new BigDecimal("0.48"), shirtReturn.getTax());
+        assertEquals(new BigDecimal("25.00"), consoleReturn.getTax());
+        assertEquals(new BigDecimal("10.80"), gameReturn.getTax());
     }
-    */
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldRespond422IllegalArgumentIfInvoiceStateDoesNotExistInTaxRateRepo(){
+        Invoice badStateInput = shirtInvoiceInput;
+        badStateInput.setState("ZZ");
+
+        Invoice returnInvoice = service.createInvoiceAndReturn(badStateInput);
+        fail("We Failed the Test, Exception Not Thrown.");
+    }
+
+    @Test
+    public void shouldCalculateAndSetTotalForInvoice(){
+        Invoice shirtReturn = service.createInvoiceAndReturn(shirtInvoiceInput);
+        Invoice consoleReturn = service.createInvoiceAndReturn(consoleInvoiceInput);
+        Invoice gameReturn = service.createInvoiceAndReturn(gameInvoiceInput);
+
+        assertEquals(new BigDecimal("18.44"), shirtReturn.getTotal());
+        assertEquals(new BigDecimal("539.98"), consoleReturn.getTotal());
+        assertEquals(new BigDecimal("192.26"), gameReturn.getTotal());
+    }
+
 }
