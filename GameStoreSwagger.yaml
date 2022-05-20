@@ -100,6 +100,18 @@ paths:
       responses:
         '204':
           description: No Content. Successful Request.
+          
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMsg: No T Shirt with Id 52 was found
+                status: 404
+                errorCode: 404 NOT_FOUND
+                timestamp: '2022-05-12T17:57:34.614'
   /games/{id}:
     get:
       description: Finds a specific game based on the id path variable. If there is no matching id in the database, an error response is returned.
@@ -128,6 +140,17 @@ paths:
                 studio: FromSoftware
                 price: 59.99
                 quantity: 100
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMsg: No Game with Id 52 was found
+                status: 404
+                errorCode: 404 NOT_FOUND
+                timestamp: '2022-05-12T17:57:34.614'
                        
     put:
       description: Updates a specific game based on the id pathvariable and the requestbody. If the update requestbody object contains errors with validation or if the id in the pathvariable does not match the game in the requestbody, an error response is returned. There is no response body, only a status response. 
@@ -173,6 +196,18 @@ paths:
       responses:
         '204':
           description: No Content
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMsg: No Game with Id 52 was found
+                status: 404
+                errorCode: 404 NOT_FOUND
+                timestamp: '2022-05-12T17:57:34.614'   
+          
   /consoles/{id}:
     get:
       description: Retrieves a specific console bsaed on the id path variable. If there is no console for the id given, an error response is returned. 
@@ -201,6 +236,18 @@ paths:
                 processor: AMD
                 price: 499.99
                 quantity: 50
+                
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMsg: No Console with Id 3212 was found
+                status: 404
+                errorCode: 404 NOT_FOUND
+                timestamp: '2022-05-12T17:57:34.614'
     put:
       description: Updates a specific console based on the id pathvariable and the requestbody. If the update requestbody object contains errors or if the id in the pathvariable does not match the console in the requestbody to update an error response is returned. There is no response body, only a status response.
       tags:
@@ -244,6 +291,18 @@ paths:
       responses:
         '204':
           description: No Content
+          
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMsg: No T Shirt with Id 52 was found
+                status: 404
+                errorCode: 404 NOT_FOUND
+                timestamp: '2022-05-12T17:57:34.614'
   /tshirts:
     get:
       description: Retrieves a JSON List of all t-shirts in the database.
@@ -318,7 +377,7 @@ paths:
                 
   /purchase:
     post:
-      description: Creates an invoice based on the request body. Request body includes customer information and itemtype, and item id. The sales and tax information are then calculated and returned in an invoice object. 
+      description: Creates an invoice based on the request body. Request body includes customer information and itemtype, and item id. The sales and tax information are then calculated and returned in an invoice object. Errors in State abbreviation, quantity requested over volume in inventory, wrong item type (not tshirt, game, or console) and null values for required name and address field will return error messages.
       tags:
         - invoice-controller
       operationId: requestItemPurchase
@@ -359,6 +418,17 @@ paths:
                 tax: 0.24
                 processingFee: 1.98
                 total: 10.21
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomErrorResponse'
+              example:
+                errorMsg: No TaxRate found for state ZZ
+                status: 404
+                errorCode: 404 NOT_FOUND
+                timestamp: '2022-05-12T17:57:34.614'
   
   /games:
     get:
